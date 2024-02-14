@@ -28,17 +28,23 @@ cv2.imwrite(path+'gray_img.bmp', gray_img)
 print(row)
 print(col)
 
-text_path = path + 'img_values3.txt'
+text_path = path + 'img_values.hex'
 
+#file stuff
 with open(text_path, 'w') as text_file:
-        # Iterate through each pixel in the image
+        
+        #iterate through each pixel in the image
         for x in range(0,row):
             for y in range(0,col):
                 
-                # Convert RGB to grayscale by averaging the values
+                #img value to array
                 gray_value = gray_img[x, y]
 
-                # Write the grayscale value to the text file
-                text_file.write(f"{gray_value} ")
+                #gray rbg to hex value
+                hex_value = format(gray_value, '02X')
+
+                #hex value to text file
+                text_file.write(f"{hex_value} ")
             
+            #new line in txt file
             text_file.write(f"\n")
