@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 
 #file path
-path = 'D:\\workspace\\fysiko_apth\\ptuxiaki\\code\\ptuxiaki\\img_project\\'
+path = 'D:\\workspace\\fysiko_apth\\ptuxiaki\\code\\ptuxiaki\\'
 
 #read image
 img = cv2.imread(path +'test_img.png') 
