@@ -2,7 +2,7 @@ from PIL import Image
 import cv2
 import numpy as np
 
-#file path
+#file path - pc & tablet
 #path = 'D:\\workspace\\fysiko_apth\\ptuxiaki\\code\\ptuxiaki\\'
 path = 'C:\\workspace\\fusiko\\ptuxiaki\\github\\ptuxiaki\\'
 
@@ -38,7 +38,7 @@ with open(text_path, 'w') as text_file:
         for x in range(0,row):
             for y in range(0,col):
                 
-                #img value to array
+                #gray img value to array
                 gray_value = gray_img[x, y]
 
                 #gray rbg to hex value
