@@ -40,7 +40,7 @@ with open(text_path, 'w') as text_file:
                 
                 #gray img value to array
                 gray_value = gray_img[x, y]
-
+                
                 #gray rbg to hex value
                 hex_value = format(gray_value, '02X')
                 
