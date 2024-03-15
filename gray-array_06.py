@@ -1,5 +1,8 @@
 #change structure gia verilog processing
 #matrix NxN
+#correction gia otan de xoraei akribos to kernel
+#pairnei N os paragonta 
+#output se binary kai sosti seira
 
 from PIL import Image
 import cv2
