@@ -1,3 +1,4 @@
+#
 # takes RGB image and turns it to grayscale
 # converts values to HEX
 # puts in .txt and .hex value to use as input to verilog
@@ -8,7 +9,7 @@ import cv2
 import numpy as np
 
 #file path
-path = './'
+path = './image_pre-process/'
 
 #read image
 img = cv2.imread(path +'images-vals/test_img.png') 

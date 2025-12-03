@@ -1,3 +1,6 @@
+# 
+# dont know - dont work
+#
 import aspose.words as aw
 
 #new way - did not need it - just exists for arxeio
