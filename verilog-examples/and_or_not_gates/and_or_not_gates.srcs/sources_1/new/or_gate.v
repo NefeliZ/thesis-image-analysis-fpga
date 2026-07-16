@@ -1,0 +1,14 @@
+`timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+//////
+// simple OR gate
+//////
+module or_gate
+(
+    input a,
+    input b,
+    output or_y
+);
+    assign or_y = a | b;
+    
+endmodule
