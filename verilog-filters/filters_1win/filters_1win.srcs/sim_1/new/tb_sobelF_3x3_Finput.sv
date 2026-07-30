@@ -46,7 +46,7 @@ module tb_sobelF_3x3_Finput;
     
     parameter string path = "C:/workspace/fysiko_apth/ptuxiaki/general-code/img_process/files/";
     parameter string FILE_IN  = {path, "bin_vals_3x3.txt"};
-    parameter string FILE_OUT = {path, "verilog_out.txt"};
+    parameter string FILE_OUT = {path, "verilog_out_sobel_3x3.txt"};
         
     initial begin
     

@@ -15,11 +15,11 @@ import matplotlib.pyplot as plt
 #file path
 path = './img_process/files/'
 
-verilog_input_path = path + 'verilog_out.txt'
-verilog_img_recreate_path = path + 'verilog_img_recreate.png'
+verilog_input_path = path + "verilog_out_sobel_3x3.txt"
+verilog_img_recreate_path = path + 'verilog_rec_sobel_3x3.png'
 og_img_path = path + 'test_img.png'
 gray_img_path = path + 'gray_img.png'
-py_img_filter_path = path + 'py_img_filter.png'
+py_img_filter_path = path + 'py_img_sobel_3x3.png'
 
 # window size
 N = 3
