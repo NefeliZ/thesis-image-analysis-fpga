@@ -1,5 +1,5 @@
-#
-# sobel filter 3x3 window
+# 
+# box blur - 5x5 window
 # takes verilog output
 # pixel vals affter sobel filter - 1 pixel per line
 # recreates image
@@ -16,14 +16,14 @@ import matplotlib.pyplot as plt
 #file path
 path = './img_process/files/'
 
-verilog_input_path = path + "verilog_out_sobel_3x3.txt"
-verilog_img_recreate_path = path + 'verilog_rec_sobel_3x3.png'
+verilog_input_path = path + "verilog_out_blur_5x5.txt"
+verilog_img_recreate_path = path + 'verilog_rec_blur_5x5.png'
 og_img_path = path + 'test_img.png'
 gray_img_path = path + 'gray_img.png'
-py_img_filter_path = path + 'py_img_sobel_3x3.png'
+py_img_filter_path = path + 'py_img_blur_5x5.png'
 
 # window size
-N = 3
+N = 5
 
 # extract size of img 
 # suppose img is square
@@ -77,28 +77,9 @@ elif not(Prow > Vrow) and Pcol > Vcol:
 
 (Crow, Ccol) = gray_crop.shape[0:2]
 
-#  Sobel(src_gray, grad_x, ddepth, x_order, y_order, ksize, scale, delta, BORDER_DEFAULT);
-# cv2.CV_16S -> 16-bit signed int
-# order of derivative 
-sobelx = cv2.Sobel(gray_crop, cv2.CV_16S, 1, 0, ksize=N)
-sobely = cv2.Sobel(gray_crop, cv2.CV_16S, 0, 1, ksize=N)
-
-# calc absolute vals
-abs_sobelx = cv2.convertScaleAbs(sobelx)
-abs_sobely = cv2.convertScaleAbs(sobely)
-
-#abs_sobelx = abs(sobelx)
-#abs_sobely = abs(sobely)
-
-# calc magnitude G
-w = 1.0 #weight
-g = cv2.addWeighted(abs_sobelx, w, abs_sobely, w, 0)
-#g = np.sqrt(sobelx**2 + sobely**2)
-
-cv2.imwrite(py_img_filter_path, g)
-
-#cv2.imshow('apply filter only with python - sobel 1win 3x3', g)
-#cv2.waitKey(0)
+# cv2.boxFilter(img, ddepth, (width, height), normalize=False)
+blured_img = cv2.boxFilter(gray_crop, -1, (N, N), normalize=True)
+cv2.imwrite(py_img_filter_path, blured_img)
 
 # keep img for calcs
 py_img_filter = cv2.imread(py_img_filter_path, cv2.IMREAD_GRAYSCALE)

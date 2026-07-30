@@ -8,9 +8,9 @@ module sobelF_3x3 #(
 
  parameter DATA_WIDTH = 8
 )(
-    input  logic clk,
-    input  logic reset,
-    input  logic valid_in,
+    input logic clk,
+    input logic reset,
+    input logic valid_in,
     
     // 2D array 3x3 - filter window
     input  logic [DATA_WIDTH-1:0] window [0:2][0:2],
@@ -22,9 +22,9 @@ module sobelF_3x3 #(
     //middle vars used to calc - 11-bit
     logic signed [10:0] gx;
     logic signed [10:0] gy;
-    logic        [10:0] abs_gx;
-    logic        [10:0] abs_gy;
-    logic        [10:0] g_sum;
+    logic [10:0] abs_gx;
+    logic [10:0] abs_gy;
+    logic [10:0] g_sum;
 
     //sobel filter calculations
     always_comb begin
