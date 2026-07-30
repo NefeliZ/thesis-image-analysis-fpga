@@ -3,8 +3,11 @@
 Repository for undergrad thesis.
 
 ## Current subdirectories
-* image pre-proccess: 
-make input file for verilog code. binary or HEX values of gray test image, in proper format,
+* image_proccess: 
+    * make input file for verilog code. binary values of gray test image, in proper format
+    * take verilog output -> recreate image & compare with python filtered image
+* verilog-filters
+    * image filtering with 1 window: different filters and window sizes
 * examples in verilog: .xpr project, sources and testbenches
     * basic gates
     * multiplexers (2-to-1, 4-to-1)

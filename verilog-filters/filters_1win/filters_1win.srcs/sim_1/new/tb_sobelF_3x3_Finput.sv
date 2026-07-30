@@ -1,7 +1,9 @@
 `timescale 1ns / 1ps
-
+//////////////////////////////////////////////////////////////////////////////////
+//////
 // sobel filter with 3x3 window - testbench with input file 
 // (from python preprocess)
+//////
 
 module tb_sobelF_3x3_Finput;
 
@@ -42,7 +44,7 @@ module tb_sobelF_3x3_Finput;
     int read_count  = 0; //count read pixels
     int write_count = 0; // count written pixels
     
-    parameter string path = "./img_process/files";
+    parameter string path = "C:/workspace/fysiko_apth/ptuxiaki/general-code/img_process/files/";
     parameter string FILE_IN  = {path, "bin_vals_3x3.txt"};
     parameter string FILE_OUT = {path, "verilog_out.txt"};
         

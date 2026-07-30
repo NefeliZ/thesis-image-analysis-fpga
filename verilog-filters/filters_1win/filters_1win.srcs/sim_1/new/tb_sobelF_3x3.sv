@@ -1,6 +1,8 @@
 `timescale 1ns / 1ps
-
-// sobel filter with 3x3 window - testbench with set vals
+//////////////////////////////////////////////////////////////////////////////////
+//////
+// sobel filter with 3x3 window -testbench
+//////
 
 module tb_sobelF_3x3;
     logic clk;

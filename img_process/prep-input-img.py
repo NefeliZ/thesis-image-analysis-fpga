@@ -5,15 +5,16 @@
 # converts values to binary
 # puts in .txt to use as input to verilog
 # each line has 9 pixel vals -> window size
+# works for square img
 #
 from PIL import Image
 import cv2
 import numpy as np
 from PIL import Image, ImageOps
-
+#############
 
 #file path
-path = './img_process/files'
+path = './img_process/files/'
 
 text_path = path + 'bin_vals_3x3.txt'
 gray_img_path = path + 'gray_img.png'

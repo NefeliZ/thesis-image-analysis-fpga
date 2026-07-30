@@ -2,6 +2,7 @@
 # takes verilog output
 # pixel vals affter sobel filter - 1 pixel per line
 # recreates image
+# works for square img
 #
 from PIL import Image
 import cv2
@@ -9,9 +10,10 @@ import numpy as np
 from PIL import Image, ImageOps
 import os
 import matplotlib.pyplot as plt
+#############
 
 #file path
-path = 'C:/workspace/fysiko_apth/ptuxiaki/general-code/img-pre-process/'
+path = './img_process/files/'
 
 verilog_input_path = path + 'verilog_out.txt'
 verilog_img_recreate_path = path + 'verilog_img_recreate.png'
@@ -111,27 +113,4 @@ diff2 = verilog_img_recreate - py_img_filter
 plt.imshow(diff, cmap='hot')
 plt.colorbar(label='Pixel Difference')
 plt.title(f'2D Difference Map (Max Diff: {np.max(diff)})')
-plt.show()
-
-fig, axes = plt.subplots(1, 2, figsize=(14, 6))
-
-# --- Plot 1: Histogram των Διαφορών ---
-axes[0].hist(diff.flatten(), bins=range(0, int(np.max(diff))+2), align='left', color='skyblue', edgecolor='black')
-axes[0].set_title("Histogram of Pixel Differences")
-axes[0].set_xlabel("Absolute Difference Value")
-axes[0].set_ylabel("Count of Pixels")
-axes[0].grid(axis='y', linestyle='--', alpha=0.7)
-
-# --- Plot 2: Scatter Plot Σύγκρισης (Python vs Verilog) ---
-axes[1].scatter(py_img_filter.flatten(), verilog_img_recreate.flatten(), alpha=0.3, color='purple', edgecolors='none')
-axes[1].set_title("Python Pixel Value vs Verilog Pixel Value")
-axes[1].set_xlabel("Python Sobel Value")
-axes[1].set_ylabel("Verilog HW Sobel Value")
-# Βάζουμε διαγώνια γραμμή αναφοράς y = x
-max_val = max(np.max(py_img_filter), np.max(verilog_img_recreate))
-axes[1].plot([0, max_val], [0, max_val], color='red', linestyle='--', label='Ideal (y=x)')
-axes[1].legend()
-axes[1].grid(True, linestyle='--', alpha=0.7)
-
-plt.tight_layout()
 plt.show()
