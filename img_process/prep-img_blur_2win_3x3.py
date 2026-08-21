@@ -17,7 +17,7 @@ from PIL import Image, ImageOps
 path = 'C:/workspace/fysiko_apth/ptuxiaki/general-code/img_process/files/'
 
 #text_path = path + 'bin_vals_3x3.txt'
-text_path = path + 'bin_vals_5x5.txt'
+text_path = path + 'bin_vals_2win_3x3.txt'
 
 gray_img_path = path + 'gray_img.png'
 
@@ -40,7 +40,7 @@ print(row)
 print(col)
 
 #N = size of mask matrix for each filer
-N = 5
+N = 3
 
 # fix size to fit NxN iteration
 if (col%N != 0 or row%N != 0):
@@ -65,18 +65,21 @@ print('new img dimensions')
 print(row)
 print(col)
 
+# 2 windows => grid: 3 rows 4 cols =>
+G_row = N
+G_col = N+1
 
 #file stuff - iterate by desired struct
 with open(text_path, 'w') as text_file:
         
         #iterate through each pixel in the image
-        for k in range(0,row-N):
-            for i in range(0,col-N):
-                window = out_img[k:k+N, i:i+N]
+        for k in range(0,row-G_row+1):
+            for i in range(0,col-G_col+1, 2): #step 2
+                window_3x4 = out_img[k:k+G_row, i:i+G_col]
 
                 #gray rbg to binary value
-                for j in range(0, len(window.flatten())):
-                    win_binary = format(window.flatten()[j], '08b') #steady 8bit width
+                for j in range(0, len(window_3x4.flatten())):
+                    win_binary = format(window_3x4.flatten()[j], '08b') #steady 8bit width
                     
                     #binary value to text file
                     text_file.write(f"{win_binary} ")

@@ -30,13 +30,14 @@ module sobelF_3x3 #(
     always_comb begin
         // Kx: [-1 0 1 | -2 0 2 | -1 0 1]
         //Gx = (Kx02 + 2Kx12 + Kx22) - (Kx00 +2Kx10 +Kx20)
-        gx = $signed({1'b0, window[0][2]}) + $signed({1'b0, window[1][2]} << 1) + $signed({1'b0, window[2][2]})
-           - $signed({1'b0, window[0][0]}) - $signed({1'b0, window[1][0]} << 1) - $signed({1'b0, window[2][0]});
+        //extra 'paddign'(0s at the sign) to avoid error when shifting
+        gx = $signed({3'b000, window[0][2]}) + ($signed({3'b000, window[1][2]}) << 1) + $signed({3'b000, window[2][2]})
+           - $signed({3'b000, window[0][0]}) - ($signed({3'b000, window[1][0]}) << 1) - $signed({3'b000, window[2][0]});
 
         // Ky: [1 2 1 | 0 0 0 | -1 -2 -1]
         //Gy = (Ky00 + 2Ky01 + Ky02) - (Ky20 +2Ky21 +Ky22)
-        gy = $signed({1'b0, window[0][0]}) + $signed({1'b0, window[0][1]} << 1) + $signed({1'b0, window[0][2]})
-           - $signed({1'b0, window[2][0]}) - $signed({1'b0, window[2][1]} << 1) - $signed({1'b0, window[2][2]});
+        gy = $signed({3'b000, window[0][0]}) + ($signed({3'b000, window[0][1]}) << 1) + $signed({3'b000, window[0][2]})
+           - $signed({3'b000, window[2][0]}) - ($signed({3'b000, window[2][1]}) << 1) - $signed({3'b000, window[2][2]});
 
         // absolute vals
         abs_gx = (gx < 0) ? -gx : gx;

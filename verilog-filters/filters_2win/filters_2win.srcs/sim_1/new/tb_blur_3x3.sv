@@ -1,33 +1,37 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
 //////
-// sobel filter with 3x3 window - testbench with input file 
-// (from python preprocess)
+// blur filter with 2 windows 3x3 - testbench
 //////
 
-module tb_sobelF_3x3_Finput;
+module tb_blur_3x3;
 
     localparam DATA_WIDTH = 8;
     
     logic clk;
     logic reset;
     logic valid_in;
-    logic [DATA_WIDTH-1:0] window [0:2][0:2];
+    logic [DATA_WIDTH-1:0] grid [0:2][0:3];
     
     logic valid_out;
-    logic [7:0] pixel_out;
+    logic [7:0] pixel_out_0;
+    logic [7:0] pixel_out_1;
 
     // instantiation uut
-    sobelF_3x3 #(
+    blur_3x3#(
     .DATA_WIDTH(DATA_WIDTH)
-    ) uut (
-        .clk(clk),
-        .reset(reset),
-        .valid_in(valid_in),
-        .window(window),
-        .valid_out(valid_out),
-        .pixel_out(pixel_out)
-    );
+    )uut(
+    .clk(clk),
+    .reset(reset),
+    .valid_in(valid_in),
+    
+    //2 windows => 3rows & 4cols => 12 pixels -> 3x4
+    .grid(grid), 
+    
+    .valid_out(valid_out),
+    .pixel_out_0(pixel_out_0), // 1st window
+    .pixel_out_1(pixel_out_1)  //2nd win
+);
 
     // clock
     initial begin
@@ -38,20 +42,20 @@ module tb_sobelF_3x3_Finput;
     //vars & paths for files
     int file_in, file_out;
     int status;
-    logic [7:0] p0, p1, p2, p3, p4, p5, p6, p7, p8; //each line has 9 vals (full window)
+    logic [7:0] p [0:11]; // each line has 12 vals (2 windows 1 grid)
     
     //for debugging
     int read_count  = 0; //count read pixels
     int write_count = 0; // count written pixels
     
     parameter string path = "C:/workspace/fysiko_apth/ptuxiaki/general-code/img_process/files/";
-    parameter string FILE_IN  = {path, "bin_vals_3x3.txt"};
-    parameter string FILE_OUT = {path, "verilog_out_sobel_3x3.txt"};
+    parameter string FILE_IN  = {path, "bin_vals_2win_3x3.txt"};
+    parameter string FILE_OUT = {path, "verilog_out_blur_2win_3x3.txt"};
         
     initial begin
     
         $display("--------------------------------------------------");
-        $display("Sobel 1 window 3x3 testbench - img file input ");
+        $display("Blur 2 window 3x3 testbench - img file input ");
         $display("--------------------------------------------------");
         
         file_in  = $fopen(FILE_IN, "r");
@@ -73,18 +77,21 @@ module tb_sobelF_3x3_Finput;
         while (!$feof(file_in)) 
         begin
             //scan vals from file
-            status = $fscanf(file_in, "%b %b %b %b %b %b %b %b %b\n",p0, p1, p2, p3, p4, p5, p6, p7, p8);
+            status = $fscanf(file_in, "%b %b %b %b %b %b %b %b %b %b %b %b\n", 
+                 p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], p[9], 
+                 p[10], p[11]);
 
-            if (status == 9) begin
+            if (status == 12) 
+            begin
                 read_count++; // calc read
                 @(posedge clk);
                 #1;
                 valid_in = 1'b1; //took input
                 
-                //assign vals to window
-                window[0][0] = p0; window[0][1] = p1; window[0][2] = p2;
-                window[1][0] = p3; window[1][1] = p4; window[1][2] = p5;
-                window[2][0] = p6; window[2][1] = p7; window[2][2] = p8;
+                //assign vals to grid
+                grid[0][0] = p[0];  grid[0][1] = p[1];  grid[0][2] = p[2];  grid[0][3] = p[3];
+                grid[1][0] = p[4];  grid[1][1] = p[5];  grid[1][2] = p[6];  grid[1][3] = p[7];
+                grid[2][0] = p[8];  grid[2][1] = p[9];  grid[2][2] = p[10]; grid[2][3] = p[11];
             end
         end
 
@@ -107,10 +114,12 @@ module tb_sobelF_3x3_Finput;
     end
 
     //save to file
-    always @(posedge clk) begin
+    always @(posedge clk) 
+    begin
         if (valid_out) begin
-            $fwrite(file_out, "%d\n", pixel_out);
-            write_count++;
+           $fwrite(file_out, "%d\n", pixel_out_0);
+            $fwrite(file_out, "%d\n", pixel_out_1);
+            write_count += 2;
         end
     end
 

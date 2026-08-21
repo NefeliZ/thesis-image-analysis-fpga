@@ -1,5 +1,5 @@
 #
-# box blur - 5x5 window
+# sobel filter 3x3 window
 # takes verilog output
 # pixel vals affter sobel filter - 1 pixel per line
 # recreates image
@@ -16,14 +16,14 @@ import matplotlib.pyplot as plt
 #file path
 path = 'C:/workspace/fysiko_apth/ptuxiaki/general-code/img_process/files/'
 
-verilog_input_path = path + "verilog_out_blur_5x5.txt"
-verilog_img_recreate_path = path + 'verilog_rec_blur_5x5.png'
+verilog_input_path = path + "verilog_out_sobel_3x3.txt"
+verilog_img_recreate_path = path + 'verilog_rec_sobel_3x3.png'
 og_img_path = path + 'test_img.png'
 gray_img_path = path + 'gray_img.png'
-py_img_filter_path = path + 'py_img_blur_5x5.png'
+py_img_filter_path = path + 'py_img_sobel_3x3.png'
 
 # window size
-N = 5
+N = 3
 
 # extract size of img 
 # suppose img is square
@@ -77,9 +77,28 @@ elif not(Prow > Vrow) and Pcol > Vcol:
 
 (Crow, Ccol) = gray_crop.shape[0:2]
 
-# cv2.boxFilter(img, ddepth, (width, height), normalize=False)
-blured_img = cv2.boxFilter(gray_crop, -1, (N, N), normalize=True)
-cv2.imwrite(py_img_filter_path, blured_img)
+#  Sobel(src_gray, grad_x, ddepth, x_order, y_order, ksize, scale, delta, BORDER_DEFAULT);
+# cv2.CV_16S -> 16-bit signed int
+# order of derivative 
+sobelx = cv2.Sobel(gray_crop, cv2.CV_16S, 1, 0, ksize=N)
+sobely = cv2.Sobel(gray_crop, cv2.CV_16S, 0, 1, ksize=N)
+
+# calc absolute vals
+abs_sobelx = cv2.convertScaleAbs(sobelx)
+abs_sobely = cv2.convertScaleAbs(sobely)
+
+#abs_sobelx = abs(sobelx)
+#abs_sobely = abs(sobely)
+
+# calc magnitude G
+w = 1.0 #weight
+g = cv2.addWeighted(abs_sobelx, w, abs_sobely, w, 0)
+#g = np.sqrt(sobelx**2 + sobely**2)
+
+cv2.imwrite(py_img_filter_path, g)
+
+#cv2.imshow('apply filter only with python - sobel 1win 3x3', g)
+#cv2.waitKey(0)
 
 # keep img for calcs
 py_img_filter = cv2.imread(py_img_filter_path, cv2.IMREAD_GRAYSCALE)
@@ -96,3 +115,23 @@ plt.imshow(diff, cmap='hot')
 plt.colorbar(label='Pixel Difference')
 plt.title(f'2D Difference Map (Max Diff: {np.max(diff)})')
 plt.show()
+
+plt.imshow(diff2, cmap='hot')
+plt.colorbar(label='Pixel Difference')
+plt.title(f'2D Difference Map (Max Diff: {np.max(diff)})')
+plt.show()
+
+verilog_img_recreate_transposed = ver_arr.T
+diff_transposed = cv2.absdiff(verilog_img_recreate_transposed, py_img_filter)
+print("Max Diff με Transpose:", np.max(diff_transposed))
+
+verilog_img_recreate_vflip = cv2.flip(ver_arr, 0)
+diff_vflip = cv2.absdiff(verilog_img_recreate_vflip, py_img_filter)
+print("Max Diff με Vertical Flip:", np.max(diff_vflip))
+
+verilog_img_recreate_hflip = cv2.flip(ver_arr, 1)
+diff_hflip = cv2.absdiff(verilog_img_recreate_hflip, py_img_filter)
+print("Max Diff με Horizontal Flip:", np.max(diff_hflip))
+
+print("Verilog First 5:", ver_pixels[:5])
+print("Python First 5: ", g.flatten()[:5])

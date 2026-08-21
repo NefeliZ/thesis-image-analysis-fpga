@@ -1,11 +1,11 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
 //////
-// sobel filter with 3x3 window - testbench with input file 
+// sobel filter with 3x3 window & ieee 754- testbench with input file 
 // (from python preprocess)
 //////
 
-module tb_sobelF_3x3_Finput;
+module tb_sobel_3x3_ieee;
 
     localparam DATA_WIDTH = 8;
     
@@ -18,7 +18,7 @@ module tb_sobelF_3x3_Finput;
     logic [7:0] pixel_out;
 
     // instantiation uut
-    sobelF_3x3 #(
+    sobel_3x3_ieee #(
     .DATA_WIDTH(DATA_WIDTH)
     ) uut (
         .clk(clk),
@@ -46,7 +46,7 @@ module tb_sobelF_3x3_Finput;
     
     parameter string path = "C:/workspace/fysiko_apth/ptuxiaki/general-code/img_process/files/";
     parameter string FILE_IN  = {path, "bin_vals_3x3.txt"};
-    parameter string FILE_OUT = {path, "verilog_out_sobel_3x3.txt"};
+    parameter string FILE_OUT = {path, "verilog_out_sobel_3x3_ieee.txt"};
         
     initial begin
     
@@ -75,7 +75,8 @@ module tb_sobelF_3x3_Finput;
             //scan vals from file
             status = $fscanf(file_in, "%b %b %b %b %b %b %b %b %b\n",p0, p1, p2, p3, p4, p5, p6, p7, p8);
 
-            if (status == 9) begin
+            if (status == 9) 
+            begin
                 read_count++; // calc read
                 @(posedge clk);
                 #1;
@@ -107,7 +108,8 @@ module tb_sobelF_3x3_Finput;
     end
 
     //save to file
-    always @(posedge clk) begin
+    always @(posedge clk) 
+    begin
         if (valid_out) begin
             $fwrite(file_out, "%d\n", pixel_out);
             write_count++;
