@@ -6,8 +6,12 @@ Repository for undergrad thesis.
 * image_proccess: 
     * make input file for verilog code. binary values of gray test image, in proper format
     * take verilog output -> recreate image & compare with python filtered image
-* verilog-filters
-    * image filtering with 1 window: different filters and window sizes
+    * custom filters in python
+    * filtered image comparison
+* filter_cases
+    * different image filters with different window sizes
+    * Systemverilog projects with different cases (shifts, adders/multipliers)
+    * results & metrics
 * examples in verilog: .xpr project, sources and testbenches
     * basic gates
     * multiplexers (2-to-1, 4-to-1)
@@ -15,6 +19,7 @@ Repository for undergrad thesis.
     * Flip-Flop
     * Counter
     * FSM
+    * image flters tests
 
 
 ## Versions
