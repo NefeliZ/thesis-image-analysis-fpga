@@ -1,6 +1,6 @@
 #
 # takes RGB image and turns it to grayscale
-# adds padding to img to lose pixel info
+# adds padding to img to not lose pixel info
 # converts values to binary
 # puts in .txt to use as input to verilog
 # each line has 1 pixel bin val
@@ -20,7 +20,7 @@ import custom_filters
 #file path
 path = 'C:/workspace/fysiko_apth/ptuxiaki/general-code/img_process/files/'
 
-text_path = path + 'bin_vals_3x3_new.txt'
+text_path = path + 'bin_vals_3x3.txt'
 #text_path = path + 'bin_vals_5x5.txt'
 
 gray_img_path = path + 'gray_img.png'

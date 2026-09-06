@@ -10,7 +10,9 @@ packages = [
     "requests",
     "beautifulsoup4",
     "openpyxl",
-    "pillow"
+    "pillow",
+    "opencv-python",
+    "scikit-image"
 ]
 
 print("---- start install packages")
