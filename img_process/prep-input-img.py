@@ -16,8 +16,8 @@ from PIL import Image, ImageOps
 #file path
 path = 'C:/workspace/fysiko_apth/ptuxiaki/general-code/img_process/files/'
 
-#text_path = path + 'bin_vals_3x3.txt'
-text_path = path + 'bin_vals_5x5.txt'
+text_path = path + 'bin_vals_3x3.txt'
+#text_path = path + 'bin_vals_5x5.txt'
 
 gray_img_path = path + 'gray_img.png'
 
@@ -40,7 +40,7 @@ print(row)
 print(col)
 
 #N = size of mask matrix for each filer
-N = 5
+N = 3
 
 # fix size to fit NxN iteration
 if (col%N != 0 or row%N != 0):

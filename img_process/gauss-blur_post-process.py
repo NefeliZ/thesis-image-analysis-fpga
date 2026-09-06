@@ -11,8 +11,8 @@ import numpy as np
 from PIL import Image, ImageOps
 import os
 import matplotlib.pyplot as plt
-import sys
 #
+import sys
 sys.path.append('C:/workspace/fysiko_apth/ptuxiaki/general-code/img_process') #add path for py files
 import my_functions
 import custom_filters
