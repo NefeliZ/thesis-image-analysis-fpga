@@ -2,10 +2,10 @@
 //////////////////////////////////////////////////////////////////////////////////
 //////
 // top module to connect linebuffer and filter
-// sobel filter with 3x3 window - integers - shifts 
+// sobel filter with 3x3 window - ieee
 //////
 
-module top_sobel3x3_int_shift #(
+module top_sobel3x3_ieee #(
     parameter int DATA_WIDTH = 8,
     parameter int IMG_WIDTH = 52,
     parameter int IMG_HEIGHT = 52
@@ -31,7 +31,7 @@ module top_sobel3x3_int_shift #(
         .IMG_WIDTH(IMG_WIDTH),
         .IMG_HEIGHT(IMG_HEIGHT)
     ) 
-    u_line_buffer (
+    u_line_buffer_ieee (
         .clk (clk),
         .reset (reset),
         .valid_in (valid_in),
@@ -43,10 +43,10 @@ module top_sobel3x3_int_shift #(
     );
 
     //filter instance
-    sobel3x3_int_shift #(
+    sobel3x3_ieee #(
         .DATA_WIDTH(DATA_WIDTH)
     ) 
-    u_sobel_filter (
+    u_sobel_ieee (
         .clk (clk),
         .reset (reset),
         .valid_in (window_valid),
