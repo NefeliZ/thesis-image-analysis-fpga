@@ -7,8 +7,8 @@
 
 module line_buffer_3x3 #(
     parameter int DATA_WIDTH = 8,
-    parameter int IMG_WIDTH = 52, //change img size
-    parameter int IMG_HEIGHT = 52 
+    parameter int IMG_WIDTH = 366, //change img size
+    parameter int IMG_HEIGHT = 485 
 
 )
 

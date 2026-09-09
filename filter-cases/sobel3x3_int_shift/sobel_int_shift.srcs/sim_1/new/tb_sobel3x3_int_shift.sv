@@ -8,8 +8,8 @@
 module tb_sobel3x3_int_shift;
 
     localparam DATA_WIDTH = 8;
-    localparam int IMG_WIDTH = 52; //CHANGE
-    localparam int IMG_HEIGHT = 52;
+    localparam int IMG_WIDTH = 366; //CHANGE
+    localparam int IMG_HEIGHT = 485;
     
     localparam int TOTAL_PIXELS = (IMG_WIDTH) * (IMG_HEIGHT); 
     localparam int EXPECTED_PIXELS = (IMG_WIDTH-2) * (IMG_HEIGHT-2); //skip padding
@@ -23,7 +23,7 @@ module tb_sobel3x3_int_shift;
     bit first_pixel_seen;
     
     // clock
-    localparam time CLK_PERIOD = 10ns; // 10ns => 100 MHz
+    localparam time CLK_PERIOD = 13ns; // 10ns => 100 MHz
     logic clk;
     logic reset;
     
@@ -76,8 +76,8 @@ module tb_sobel3x3_int_shift;
     int write_count = 0; // count written pixels
     
     parameter string path = "C:/workspace/fysiko_apth/ptuxiaki/general-code/img_process/files/";
-    parameter string FILE_IN = {path, "bin_vals_3x3.txt"};
-    parameter string FILE_OUT = {path, "verilog_out_sobel3x3_int_shift.txt"};
+    parameter string FILE_IN = {path, "smeagol_bin_vals_3x3.txt"};
+    parameter string FILE_OUT = {path, "smeagol_verilog_out_sobel3x3_int_shift.txt"};
     
     ////////
     // feed input pixels
@@ -148,7 +148,7 @@ module tb_sobel3x3_int_shift;
         wait (reset == 1'b1); 
         
         while (1) begin
-            @(posedge clk); //CHANGE NEGEDGE delay to take pixel out properly
+            @(posedge clk); 
             if (valid_out) begin //wait for line buffee to fill
                 if (!first_pixel_seen) begin //=> first_pixel_seen=1
                     init_lat_cyc = cyc_count; //latency

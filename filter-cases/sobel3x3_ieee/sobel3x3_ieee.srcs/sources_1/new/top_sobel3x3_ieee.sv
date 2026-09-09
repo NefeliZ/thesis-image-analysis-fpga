@@ -7,8 +7,8 @@
 
 module top_sobel3x3_ieee #(
     parameter int DATA_WIDTH = 8,
-    parameter int IMG_WIDTH = 52,
-    parameter int IMG_HEIGHT = 52
+    parameter int IMG_WIDTH = 366,
+    parameter int IMG_HEIGHT = 485
 
 )(
     input  logic clk,

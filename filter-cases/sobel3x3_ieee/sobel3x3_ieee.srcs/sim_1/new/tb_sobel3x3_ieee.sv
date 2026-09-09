@@ -8,8 +8,8 @@
 module tb_sobel3x3_ieee;
 
     localparam DATA_WIDTH = 8;
-    localparam int IMG_WIDTH = 52; //CHANGE
-    localparam int IMG_HEIGHT = 52;
+    localparam int IMG_WIDTH = 366; //CHANGE
+    localparam int IMG_HEIGHT = 485;
     
     localparam int TOTAL_PIXELS = (IMG_WIDTH) * (IMG_HEIGHT); 
     localparam int EXPECTED_PIXELS = (IMG_WIDTH-2) * (IMG_HEIGHT-2); //skip padding
@@ -23,7 +23,7 @@ module tb_sobel3x3_ieee;
     bit first_pixel_seen;
     
     // clock
-    localparam time CLK_PERIOD = 15ns; 
+    localparam time CLK_PERIOD = 13ns; 
     logic clk;
     logic reset;
     
@@ -76,8 +76,8 @@ module tb_sobel3x3_ieee;
     int write_count = 0; // count written pixels
     
     parameter string path = "C:/workspace/fysiko_apth/ptuxiaki/general-code/img_process/files/";
-    parameter string FILE_IN = {path, "bin_vals_3x3.txt"};
-    parameter string FILE_OUT = {path, "verilog_out_sobel3x3_ieee.txt"};
+    parameter string FILE_IN = {path, "smeagol_bin_vals_3x3.txt"};
+    parameter string FILE_OUT = {path, "smeagol_verilog_out_sobel3x3_ieee.txt"};
 
     ////////
     // feed input pixels

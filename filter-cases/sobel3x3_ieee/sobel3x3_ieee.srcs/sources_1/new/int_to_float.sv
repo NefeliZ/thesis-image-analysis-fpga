@@ -23,6 +23,8 @@ module int_to_float (
     always_comb begin
         //if its 0
         if (input_bin == 8'b0) begin
+            exponent = 8'd0;
+            mantissa = 23'b0;
             output_float = 32'b0;
         end
         //exponent is 127 + position of MSB
