@@ -2,17 +2,17 @@
 //////////////////////////////////////////////////////////////////////////////////
 //////
 // testbench with input file
-// gassian blur with 3x3 window - ieee
+// sobel filter with 5x5 window - integers - shifts 
 //////
 
-module tb_gaussblur3x3_int_shift;
+module tb_sobel5x5_int_shift;
 
     localparam DATA_WIDTH = 8;
-    localparam int IMG_WIDTH = 366; //CHANGE
-    localparam int IMG_HEIGHT = 485;
+    localparam int IMG_WIDTH = 368; //CHANGE
+    localparam int IMG_HEIGHT = 487;
     
     localparam int TOTAL_PIXELS = (IMG_WIDTH) * (IMG_HEIGHT); 
-    localparam int EXPECTED_PIXELS = (IMG_WIDTH-2) * (IMG_HEIGHT-2); //skip padding
+    localparam int EXPECTED_PIXELS = (IMG_WIDTH-4) * (IMG_HEIGHT-4); //skip padding
     // => less total pixels in output than input
     // img comes padded all around from python to do calcs only in main image & win fits exactly
         
@@ -37,12 +37,12 @@ module tb_gaussblur3x3_int_shift;
     logic [DATA_WIDTH-1:0] f_input;
     
     // instantiation uut of top module only
-    top_gaussblur3x3_ieee #(
+    top_sobel5x5_int_shift #(
         .DATA_WIDTH(DATA_WIDTH),
         .IMG_WIDTH (IMG_WIDTH),
         .IMG_HEIGHT (IMG_HEIGHT)
     ) 
-    dut_ieee(
+    dut_int_shift(
         .clk (clk),
         .reset (reset),
         .valid_in (valid_in),
@@ -77,15 +77,15 @@ module tb_gaussblur3x3_int_shift;
     
     parameter string path = "C:/workspace/fysiko_apth/ptuxiaki/general-code/img_process/files/";
     parameter string FILE_IN = {path, "smeagol_bin_vals.txt"};
-    parameter string FILE_OUT = {path, "smeagol_verilog_out_gaussblur3x3_ieee.txt"};
+    parameter string FILE_OUT = {path, "smeagol_verilog_out_sobel5x5_int_shift.txt"};
     
     ////////
     // feed input pixels
     initial begin
     
-        $display("--------------------------------------------------");
-        $display("Gaussian Blur 1 window 3x3 testbench - ieee ");
-        $display("--------------------------------------------------");
+        $display("--------------------------------------------");
+        $display("Sobel 1 window 5x5 testbench - ints& shifts ");
+        $display("---------------------------------------------");
         
         file_in  = $fopen(FILE_IN, "r");
 

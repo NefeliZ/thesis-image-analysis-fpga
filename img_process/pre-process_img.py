@@ -20,13 +20,17 @@ import custom_filters
 #file path
 path = 'C:/workspace/fysiko_apth/ptuxiaki/general-code/img_process/files/'
 
-text_path = path + 'bin_vals_3x3.txt'
-#text_path = path + 'bin_vals_5x5.txt'
+case_name = 'smeagol_'
 
-gray_img_path = path + 'gray_img.png'
+#text_path = path + case_name+'bin_vals.txt'
+text_path = path + case_name+'bin_vals_doublepad.txt' #double padding for cascaded filters & 5x5
+
+
+gray_img_path = path + case_name + 'gray_img.png'
+padd_img_path = path + case_name + 'padd_img.png'
 
 #read image
-img = cv2.imread(path +'test_img.png') 
+img = cv2.imread(path + case_name + 'test_img.png') 
 
 #show image - original
 #cv2.imshow('Original', img) 
@@ -41,7 +45,13 @@ cv2.imwrite(gray_img_path, gray_img)
 print(f'init img dimensions: width/col= {col}, height/row= {row}')
 
 # change image size - add padding
-out_img, width, height = my_functions.add_padd(gray_img, col, row) #col=width, row=height
+
+# simple 3x3: 1 || cascaade3x3: 2 || simple5x5: 2 || cascade5x5: 4
+pad = 2 # CHANGE 
+
+out_img, width, height = my_functions.add_padd(gray_img, col, row, pad) #col=width, row=height
+cv2.imwrite(padd_img_path, out_img)
+
 print(f'new img dimensions: width/col= {width}, height/row= {height}')
 
 
@@ -54,6 +64,6 @@ with open(text_path, 'w') as text_file:
 
                 #gray rbg to binary value
                 pixel_binary = format(pixel, '08b') #steady 8bit width
-                    
+
                 #binary value to text file
                 text_file.write(f"{pixel_binary}\n")

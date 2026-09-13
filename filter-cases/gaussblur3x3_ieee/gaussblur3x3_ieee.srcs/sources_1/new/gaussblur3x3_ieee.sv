@@ -12,7 +12,7 @@ module gaussblur3x3_ieee #(
     input logic reset,
     input logic valid_in,
     
-    //pixel inputs 
+    //pixel inputs  
     input  logic [DATA_WIDTH-1:0] p00, p01, p02,
     input  logic [DATA_WIDTH-1:0] p10, p11, p12,
     input  logic [DATA_WIDTH-1:0] p20, p21, p22,

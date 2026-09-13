@@ -8,14 +8,16 @@ from skimage.metrics import structural_similarity as ssim
 #############
 
 # add padding around image to not lose pixel info in filter calcs
-def add_padd(og_image, og_width, og_height):
+def add_padd(og_image, og_width, og_height, pad):
 
     # add padding (0) around image
     # np.pad((top, bottom), (left, right)) 
-    image = np.pad(og_image, ((1, 1), (1, 1)), mode='constant', constant_values=0)
 
-    width = og_width + 2
-    height = og_height + 2
+    # simple 3x3: 1 || cascaade3x3: 2 || simple5x5: 2 || cascade5x5: 4
+    image = np.pad(og_image, ((pad, pad), (pad, pad)), mode='constant', constant_values=0)
+    
+    width = og_width + 2*pad
+    height = og_height + 2*pad
 
     return image, width, height
 #######
@@ -36,7 +38,7 @@ def compare_img_metrics(img1, img2):
     mse = np.mean((I1 - I2) ** 2)
     rmse = np.sqrt(mse)
 
-    # peak signal-to-noise ration - PSNR
+    # peak signal-to-noise ratio - PSNR
     # psnr = 20 * np.log10(max-possible-value) - np.log10(mse)
     if mse == 0: #if mse=0 -> log(mse)= infinite -> exactly same
         psnr = float('inf')
@@ -60,32 +62,5 @@ def compare_img_metrics(img1, img2):
     #print("--------------------------\n")
 
     return diff, max_diff, mse, rmse, psnr, ssim_val, ssim_img
-#######
-
-#no need fo that ↓
-#fix image size according to filter window size
-# adds padding (black-0) so window fits exactly
-def fix_im_size(windowSize, og_image, og_width, og_height):
-    # fix size to fit NxN iteration
-    if (og_width%windowSize != 0 or og_height%windowSize != 0):
-
-        #check how many pixels to add 
-        # (+ correct in case its 0 for one of the cases)
-        x = (windowSize - (og_width % windowSize))%windowSize 
-        y = (windowSize - (og_height % windowSize))%windowSize
-
-        # fill extra with black (0)
-        # np.pad((top, bottom), (left, right)) -> (row, col) -> (height, width) -> (y, x)
-        image = np.pad(og_image, ((0, y), (0, x)), mode='constant', constant_values=0)
-
-        width = og_width + x
-        height = og_height + y
-
-    else:
-        image = og_image
-        width = og_width
-        height = og_height 
-
-    return image, width, height
 #######
 

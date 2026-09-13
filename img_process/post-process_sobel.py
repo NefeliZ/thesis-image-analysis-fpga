@@ -20,31 +20,39 @@ import custom_filters
 ### file paths
 path = 'C:/workspace/fysiko_apth/ptuxiaki/general-code/img_process/files/'
 
-#verilog_input_path = path + "verilog_out_sobel_3x3.txt"
-verilog_input_path = path + "verilog_out_sobel3x3_int_shift.txt"
+case_name = 'smeagol_'
 
-#verilog_img_recreate_path = path + 'verilog_rec_sobel_3x3.png'
-verilog_img_recreate_path = path + 'verilog_rec_sobel3x3_int_shift.png'
+#win_size = '3x3'
+win_size = '5x5'
 
-og_img_path = path + 'test_img.png'
-gray_img_path = path + 'gray_img.png'
-#py_img_filter_path = path + 'py_img_sobel_3x3_ieee.png'
-py_img_filter_path = path + 'py_img_sobel_3x3.png'
+#verilog_input_path = path + case_name + "verilog_out_sobel" + win_size + "_ieee.txt"
+verilog_input_path = path + case_name +  "verilog_out_sobel" + win_size + "_int_shift.txt"
+
+#verilog_img_recreate_path = path + case_name+ "verilog_rec_sobel" + win_size + "_ieee.png"
+verilog_img_recreate_path = path + case_name + "verilog_rec_sobel" + win_size + "_int_shift.png"
+
+og_img_path = path + case_name +'test_img.png'
+gray_img_path = path + case_name +'gray_img.png'
+py_img_filter_path = path + case_name +"py_img_sobel" + win_size + ".png"
 
 # window size
-N = 3
+#N = 3
+N = 5
+
+# simple 3x3: 1 || cascaade3x3: 2 || simple5x5: 2 || cascade5x5: 4
+pad = 2 # CHANGE
 
 ### add padding - fix img size
 gray_img = cv2.imread(gray_img_path, cv2.IMREAD_GRAYSCALE) 
 (row, col) = gray_img.shape[0:2] 
-padd_img, width, height = my_functions.add_padd(gray_img, col, row) #col=width, row=height
+padd_img, width, height = my_functions.add_padd(gray_img, col, row, pad) #col=width, row=height
 
 
 ##########
 ### apply custom filter
-py_img_filter = custom_filters.sobel_3x3_filter(padd_img, width, height)
+py_img_filter = custom_filters.sobel_filter(padd_img, width, height, N)
 cv2.imwrite(py_img_filter_path, py_img_filter)
-cv2.imshow('apply filter only with python - sobel 1win 3x3', py_img_filter)
+cv2.imshow('apply filter only with python - sobel 1win '+ win_size, py_img_filter)
 cv2.waitKey(0)
 
 # keep img for calcs
@@ -63,12 +71,12 @@ with open(verilog_input_path, 'r') as f:
 
 #turn array to img & save
 # verilog size will be the same as python size => padd img-2
-ver_arr = np.array(ver_pixels, dtype=np.uint8).reshape((int(height-2), int(width-2)))
+ver_arr = np.array(ver_pixels, dtype=np.uint8).reshape((int(height-(2*pad)), int(width-(2*pad))))
 cv2.imwrite(verilog_img_recreate_path, ver_arr)
 
 # keep img for calcs
 verilog_img_recreate = cv2.imread(verilog_img_recreate_path, cv2.IMREAD_GRAYSCALE)
-cv2.imshow('recrete from verilog code - sobel 1win 3x3', verilog_img_recreate) 
+cv2.imshow('recrete from verilog code - sobel 1win ' + win_size, verilog_img_recreate) 
 cv2.waitKey(0)
 
 
@@ -80,7 +88,7 @@ diff, max_diff, mse, rmse, psnr, ssim_val, ssim_img = my_functions.compare_img_m
 #ssim_img = (ssim_img * 255).astype("uint8")
 
 plt.imshow(ssim_img, cmap=plt.cm.gray, vmin=0, vmax=1)
-plt.title(f'structular similarity index - full image|| ssim val: {ssim_val})')
+plt.title(f'SSIM Quality Map|| SSIM index: {ssim_val})')
 plt.colorbar(label='ssim')
 plt.axis('off')
 plt.show()
@@ -88,7 +96,7 @@ plt.show()
 # plot difference - heatmap
 plt.imshow(diff, cmap='hot')
 plt.colorbar(label='Pixel Difference')
-plt.title(f'2D Difference Map (Max Diff: {np.max(diff)})')
+plt.title(f'Absolute Difference Heatmap (Max diff: {np.max(diff)})')
 plt.show()
 
 print("--------------------------")
