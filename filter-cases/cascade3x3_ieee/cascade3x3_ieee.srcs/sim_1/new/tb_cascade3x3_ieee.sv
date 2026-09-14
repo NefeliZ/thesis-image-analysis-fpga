@@ -5,7 +5,7 @@
 // cascaded filters with 3x3 window - integers - shifts 
 //////
 
-module tb_cascade3x3_int;
+module tb_cascade3x3_ieee;
 
     localparam DATA_WIDTH = 8;
     localparam int IMG_WIDTH = 368; //CHANGE
@@ -77,7 +77,7 @@ module tb_cascade3x3_int;
     int write_count = 0; // count written pixels
     
     parameter string path = "C:/workspace/fysiko_apth/ptuxiaki/general-code/img_process/files/";
-    parameter string FILE_IN = {path, "smeagol_bin_vals_doublepad.txt"};
+    parameter string FILE_IN = {path, "smeagol_bin_vals_3x3_doublepad.txt"};
     parameter string FILE_OUT = {path, "smeagol_verilog_out_cascade3x3_ieee.txt"};
     
     ////////

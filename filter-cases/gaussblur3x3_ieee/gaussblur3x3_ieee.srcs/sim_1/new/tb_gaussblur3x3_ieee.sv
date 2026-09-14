@@ -5,7 +5,7 @@
 // gassian blur with 3x3 window - ieee
 //////
 
-module tb_gaussblur3x3_int_shift;
+module tb_gaussblur3x3_ieee;
 
     localparam DATA_WIDTH = 8;
     localparam int IMG_WIDTH = 366; //CHANGE
@@ -76,7 +76,7 @@ module tb_gaussblur3x3_int_shift;
     int write_count = 0; // count written pixels
     
     parameter string path = "C:/workspace/fysiko_apth/ptuxiaki/general-code/img_process/files/";
-    parameter string FILE_IN = {path, "smeagol_bin_vals.txt"};
+    parameter string FILE_IN = {path, "smeagol_bin_vals_3x3.txt"};
     parameter string FILE_OUT = {path, "smeagol_verilog_out_gaussblur3x3_ieee.txt"};
     
     ////////
