@@ -111,6 +111,38 @@ def gaussian_blur(image, width, height, windowSize):
                 #change center pixel in filtered img array
                 filtered_img[row-1][col-1] = G #center is -1 from curr
 
+    elif windowSize == 5:
+        weights = (1/256) * np.array([[1,  4,  6,  4, 1],[4, 16, 24, 16, 4],
+                                            [6, 24, 36, 24, 6],[4, 16, 24, 16, 4],
+                                            [1,  4,  6,  4, 1]], dtype=np.float64)
+        #init filtered img as black(0)
+        filtered_img = np.zeros((height-4, width-4), dtype=np.uint8) #unsigned 8bit int - 0to255 grayscale
+
+        # !!! array[row_index][column_index] && row=height col=width
+        for row in range(2, height-2): #run from 1 until end-1 to leave padd out|| same with verilog 
+            for col in range(2, width-2): #run from 1 until end-1 to leave padd out|| same with verilog 
+
+                #take the 3x3 window
+                #signed 32bit int - correction for multiplying with neg(-)
+                img_win = image[row-2:row+3, col-2:col+3].astype(np.int32) 
+                #arr[row-1:row+2, col-1:col+2] => row-1 to row+1, col-1 to col+1 => 9 vals
+                #if indexing like that outofbounds -> shows full array and no error
+
+                #calculate center pixel value
+                G = np.sum(weights*img_win)
+
+                # round the float G -> will be cast to int array
+                G = np.round(G)
+
+                #saturation of values - cutoff
+                if G > 255: #max val
+                    G = 255
+                elif G < 0:
+                    G = 0
+
+                #change center pixel in filtered img array
+                filtered_img[row-2][col-2] = G #center is -1 from curr
+
     return filtered_img
 ######
 
