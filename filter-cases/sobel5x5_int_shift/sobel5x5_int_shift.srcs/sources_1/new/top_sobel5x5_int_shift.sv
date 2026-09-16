@@ -19,7 +19,7 @@ module top_sobel5x5_int_shift #(
     output logic valid_out // 1 when output pixel is valid
 );
 
-    // connect line buffer to filter with window wires
+    // connect line buffer to filter with window wires 
     logic [DATA_WIDTH-1:0] w00, w01, w02, w03, w04;
     logic [DATA_WIDTH-1:0] w10, w11, w12, w13, w14;
     logic [DATA_WIDTH-1:0] w20, w21, w22, w23, w24;

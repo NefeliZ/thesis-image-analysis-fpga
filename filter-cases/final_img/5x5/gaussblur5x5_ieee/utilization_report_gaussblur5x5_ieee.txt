@@ -1,14 +1,14 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2025.2 (win64) Build 6299465 Fri Nov 14 19:35:11 GMT 2025
-| Date         : Wed Sep 16 05:08:34 2026
+| Date         : Wed Sep 16 17:34:41 2026
 | Host         : NEFOS running 64-bit major release  (build 9200)
-| Command      : report_utilization -hierarchical_min_primitive_count 50 -file C:/workspace/fysiko_apth/ptuxiaki/verilog-code/filter-cases/gaussblur5x5_ieee/utilization_report.txt -name utilization_1
+| Command      : report_utilization -hierarchical_min_primitive_count 50 -file C:/workspace/fysiko_apth/ptuxiaki/verilog-code/filter-cases/gaussblur5x5_ieee/utilization_report_2.txt -name utilization_1
 | Design       : top_gaussblur5x5_ieee
-| Device       : xc7k70tfbv676-1
+| Device       : xc7a100tcsg324-1
 | Speed File   : -1
 | Design State : Routed
---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 Utilization Design Information
 
@@ -32,15 +32,15 @@ Table of Contents
 +-------------------------+-------+-------+------------+-----------+-------+
 |        Site Type        |  Used | Fixed | Prohibited | Available | Util% |
 +-------------------------+-------+-------+------------+-----------+-------+
-| Slice LUTs              | 21293 |     0 |          0 |     41000 | 51.93 |
-|   LUT as Logic          | 21293 |     0 |          0 |     41000 | 51.93 |
-|   LUT as Memory         |     0 |     0 |          0 |     13400 |  0.00 |
-| Slice Registers         | 13643 |     0 |          0 |     82000 | 16.64 |
-|   Register as Flip Flop | 13643 |     0 |          0 |     82000 | 16.64 |
-|   Register as Latch     |     0 |     0 |          0 |     82000 |  0.00 |
-| F7 Muxes                |  1536 |     0 |          0 |     20500 |  7.49 |
-| F8 Muxes                |   736 |     0 |          0 |     10250 |  7.18 |
-| Unique Control Sets     |   378 |       |          0 |     10250 |  3.69 |
+| Slice LUTs              | 21284 |     0 |          0 |     63400 | 33.57 |
+|   LUT as Logic          | 21284 |     0 |          0 |     63400 | 33.57 |
+|   LUT as Memory         |     0 |     0 |          0 |     19000 |  0.00 |
+| Slice Registers         | 13643 |     0 |          0 |    126800 | 10.76 |
+|   Register as Flip Flop | 13643 |     0 |          0 |    126800 | 10.76 |
+|   Register as Latch     |     0 |     0 |          0 |    126800 |  0.00 |
+| F7 Muxes                |  1536 |     0 |          0 |     31700 |  4.85 |
+| F8 Muxes                |   736 |     0 |          0 |     15850 |  4.64 |
+| Unique Control Sets     |   378 |       |          0 |     15850 |  2.38 |
 +-------------------------+-------+-------+------------+-----------+-------+
 * Warning! LUT value is adjusted to account for LUT combining.
 ** Note: Available Control Sets calculated as Slice * 1, Review the Control Sets Report for more information regarding control sets.
@@ -71,14 +71,14 @@ Table of Contents
 +--------------------------------------------+-------+-------+------------+-----------+-------+
 |                  Site Type                 |  Used | Fixed | Prohibited | Available | Util% |
 +--------------------------------------------+-------+-------+------------+-----------+-------+
-| Slice                                      |  7518 |     0 |          0 |     10250 | 73.35 |
-|   SLICEL                                   |  4984 |     0 |            |           |       |
-|   SLICEM                                   |  2534 |     0 |            |           |       |
-| LUT as Logic                               | 21293 |     0 |          0 |     41000 | 51.93 |
+| Slice                                      |  7165 |     0 |          0 |     15850 | 45.21 |
+|   SLICEL                                   |  5028 |     0 |            |           |       |
+|   SLICEM                                   |  2137 |     0 |            |           |       |
+| LUT as Logic                               | 21284 |     0 |          0 |     63400 | 33.57 |
 |   using O5 output only                     |     0 |       |            |           |       |
-|   using O6 output only                     | 18992 |       |            |           |       |
-|   using O5 and O6                          |  2301 |       |            |           |       |
-| LUT as Memory                              |     0 |     0 |          0 |     13400 |  0.00 |
+|   using O6 output only                     | 18974 |       |            |           |       |
+|   using O5 and O6                          |  2310 |       |            |           |       |
+| LUT as Memory                              |     0 |     0 |          0 |     19000 |  0.00 |
 |   LUT as Distributed RAM                   |     0 |     0 |            |           |       |
 |     using O5 output only                   |     0 |       |            |           |       |
 |     using O6 output only                   |     0 |       |            |           |       |
@@ -87,11 +87,11 @@ Table of Contents
 |     using O5 output only                   |     0 |       |            |           |       |
 |     using O6 output only                   |     0 |       |            |           |       |
 |     using O5 and O6                        |     0 |       |            |           |       |
-| Slice Registers                            | 13643 |     0 |          0 |     82000 | 16.64 |
-|   Register driven from within the Slice    |  1638 |       |            |           |       |
-|   Register driven from outside the Slice   | 12005 |       |            |           |       |
-|     LUT in front of the register is unused |  7174 |       |            |           |       |
-|     LUT in front of the register is used   |  4831 |       |            |           |       |
+| Slice Registers                            | 13643 |     0 |          0 |    126800 | 10.76 |
+|   Register driven from within the Slice    |  1625 |       |            |           |       |
+|   Register driven from outside the Slice   | 12018 |       |            |           |       |
+|     LUT in front of the register is unused |  4253 |       |            |           |       |
+|     LUT in front of the register is used   |  7765 |       |            |           |       |
 +--------------------------------------------+-------+-------+------------+-----------+-------+
 
 
@@ -125,26 +125,21 @@ Table of Contents
 +-----------------------------+------+-------+------------+-----------+-------+
 |          Site Type          | Used | Fixed | Prohibited | Available | Util% |
 +-----------------------------+------+-------+------------+-----------+-------+
-| Bonded IOB                  |   20 |     0 |          0 |       300 |  6.67 |
+| Bonded IOB                  |   20 |     0 |          0 |       210 |  9.52 |
 |   IOB Master Pads           |   10 |       |            |           |       |
 |   IOB Slave Pads            |    9 |       |            |           |       |
-| Bonded IPADs                |    0 |     0 |          0 |        26 |  0.00 |
-| Bonded OPADs                |    0 |     0 |          0 |        16 |  0.00 |
+| Bonded IPADs                |    0 |     0 |          0 |         2 |  0.00 |
 | PHY_CONTROL                 |    0 |     0 |          0 |         6 |  0.00 |
 | PHASER_REF                  |    0 |     0 |          0 |         6 |  0.00 |
 | OUT_FIFO                    |    0 |     0 |          0 |        24 |  0.00 |
 | IN_FIFO                     |    0 |     0 |          0 |        24 |  0.00 |
 | IDELAYCTRL                  |    0 |     0 |          0 |         6 |  0.00 |
-| IBUFDS                      |    0 |     0 |          0 |       288 |  0.00 |
-| GTXE2_COMMON                |    0 |     0 |          0 |         2 |  0.00 |
-| GTXE2_CHANNEL               |    0 |     0 |          0 |         8 |  0.00 |
+| IBUFDS                      |    0 |     0 |          0 |       202 |  0.00 |
 | PHASER_OUT/PHASER_OUT_PHY   |    0 |     0 |          0 |        24 |  0.00 |
 | PHASER_IN/PHASER_IN_PHY     |    0 |     0 |          0 |        24 |  0.00 |
 | IDELAYE2/IDELAYE2_FINEDELAY |    0 |     0 |          0 |       300 |  0.00 |
-| ODELAYE2/ODELAYE2_FINEDELAY |    0 |     0 |          0 |       100 |  0.00 |
-| IBUFDS_GTE2                 |    0 |     0 |          0 |         4 |  0.00 |
-| ILOGIC                      |    0 |     0 |          0 |       300 |  0.00 |
-| OLOGIC                      |    0 |     0 |          0 |       300 |  0.00 |
+| ILOGIC                      |    0 |     0 |          0 |       210 |  0.00 |
+| OLOGIC                      |    0 |     0 |          0 |       210 |  0.00 |
 +-----------------------------+------+-------+------------+-----------+-------+
 
 

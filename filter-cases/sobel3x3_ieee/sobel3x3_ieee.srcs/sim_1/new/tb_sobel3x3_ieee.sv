@@ -23,7 +23,7 @@ module tb_sobel3x3_ieee;
     bit first_pixel_seen;
     
     // clock
-    localparam time CLK_PERIOD = 13ns; 
+    localparam time CLK_PERIOD = 20ns; 
     logic clk;
     logic reset;
     

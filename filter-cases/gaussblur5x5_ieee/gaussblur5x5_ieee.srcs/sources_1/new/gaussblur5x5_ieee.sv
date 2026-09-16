@@ -28,7 +28,7 @@ module gaussblur5x5_ieee #(
     logic vo_1, vo_2, vo_3, vo_4, vo_5;
     
     //gaussian blur constants in ieee format
-    localparam logic [31:0] const_1 = 32'h3f800000; //1
+    //localparam logic [31:0] const_1 = 32'h3f800000; //1
     localparam logic [31:0] const_2 = 32'h40000000; //2
     localparam logic [31:0] const_4 = 32'h40800000; //4
     localparam logic [31:0] const_6 = 32'h40c00000; //6

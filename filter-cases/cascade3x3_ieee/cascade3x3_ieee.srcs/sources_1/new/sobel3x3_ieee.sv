@@ -26,7 +26,7 @@ module sobel3x3_ieee #(
     logic vo_1, vo_2, vo_3, vo_4;
     
     //sobel filter constants in ieee format
-    localparam logic [31:0] const_1 = 32'h3f800000; //1
+    //localparam logic [31:0] const_1 = 32'h3f800000; //1
     localparam logic [31:0] const_m1 = 32'hbf800000;//-1
     localparam logic [31:0] const_0 = 32'h00000000;//0
     localparam logic [31:0] const_2 = 32'h40000000;//2
@@ -53,23 +53,24 @@ module sobel3x3_ieee #(
     //--------------------------------------------------------------
     // stage 1 - 1 cyc delay 
     //multiply pixel vals with Sobel constants
-    logic [31:0] gx0, gx2, gx3, gx5, gx6, gx8;
-    logic [31:0] gy0, gy1, gy2, gy6, gy7, gy8;
-    
+    logic [31:0] gx2, gx3, gx5, gx8;
+    logic [31:0] gy1, gy6, gy7, gy8;
+    logic [31:0] gx0, gx6, gy0, gy2; //*1 -> keep for next cycle
+    //logic [31:0] gx1, gx4, gx7, gy3, gy4, gy5; // zeroed 
     
     // Gx
     // Kx: [1 0 -1 | 2 0 -2 | 1 0 -1]
     // gx = 1*img00 + 0* img01 + -1*img02 + 2*img10 + 0*img11 + -2*img12 + 1*img20 +0*img21 + -1*img22
     //-> 1*img00,  -1*img02 , 2*img10 , -2*img12 , 1*img20 , -1*img22
-    float_multiplier u_mult_gx0 (.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp00), .b(const_1), .result(gx0), .valid_out(vo_1)); 
+    //float_multiplier u_mult_gx0 (.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp00), .b(const_1), .result(gx0), .valid_out(vo_1)); 
     //float_multiplier u_mult_gx1 (.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp01), .b(const_0), .result(gx1), .valid_out());//
-    float_multiplier u_mult_gx2 (.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp02), .b(const_m1), .result(gx2), .valid_out());
+    float_multiplier u_mult_gx2 (.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp02), .b(const_m1), .result(gx2), .valid_out(vo_1));
 
     float_multiplier u_mult_gx3 (.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp10), .b(const_2), .result(gx3), .valid_out());
     //float_multiplier u_mult_gx4 (.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp11), .b(const_0), .result(gx4), .valid_out());//
     float_multiplier u_mult_gx5 (.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp12), .b(const_m2), .result(gx5), .valid_out());
 
-    float_multiplier u_mult_gx6 (.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp20), .b(const_1), .result(gx6), .valid_out());
+    //float_multiplier u_mult_gx6 (.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp20), .b(const_1), .result(gx6), .valid_out());
     //float_multiplier u_mult_gx7 (.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp21), .b(const_0), .result(gx7), .valid_out());//
     float_multiplier u_mult_gx8 (.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp22), .b(const_m1), .result(gx8), .valid_out());
 
@@ -77,9 +78,9 @@ module sobel3x3_ieee #(
     // Ky: [1 2 1 | 0 0 0 | -1 -2 -1]
     // gy = 1*img00 + 2* img01 + 1*img02 + 0*img10 + 0*img11 + 0*img12 + -1*img20 + -2*img21 + -1*img22
     //-> 1*img00 , 2* img01 , 1*img02 , -1*img20 , -2*img21 , -1*img22
-    float_multiplier u_mult_gy0 (.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp00), .b(const_1), .result(gy0), .valid_out());
+    //float_multiplier u_mult_gy0 (.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp00), .b(const_1), .result(gy0), .valid_out());
     float_multiplier u_mult_gy1 (.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp01), .b(const_2), .result(gy1), .valid_out());
-    float_multiplier u_mult_gy2 (.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp02), .b(const_1), .result(gy2), .valid_out());
+    //float_multiplier u_mult_gy2 (.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp02), .b(const_1), .result(gy2), .valid_out());
 
     //float_multiplier u_mult_gy3 (.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp10), .b(const_0), .result(gy3), .valid_out());//
     //float_multiplier u_mult_gy4 (.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp11), .b(const_0), .result(gy4), .valid_out());//
@@ -89,6 +90,22 @@ module sobel3x3_ieee #(
     float_multiplier u_mult_gy7 (.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp21), .b(const_m2), .result(gy7), .valid_out());
     float_multiplier u_mult_gy8 (.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp22), .b(const_m1), .result(gy8), .valid_out());
     
+
+    // delay values for 1 cycle to add later
+    always_ff @(posedge clk or negedge reset) begin
+        if (!reset) begin
+            gx0 <= 32'd0;
+            gx6 <= 32'd0;
+            gy0 <= 32'd0;
+            gy2 <= 32'd0;
+        end 
+        else if (valid_in) begin
+            gx0 <= fp00;
+            gx6 <= fp20;
+            gy0 <= fp00;
+            gy2 <= fp02;
+        end
+    end
     
     //--------------------------------------------------------------
     // stage 2 - 1 cycle delay

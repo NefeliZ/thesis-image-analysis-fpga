@@ -28,7 +28,7 @@ module sobel5x5_ieee #(
     logic vo_1, vo_2, vo_3, vo_4, vo_5, vo_6;
     
     //sobel filter constants in ieee format
-    localparam logic [31:0] const_1 = 32'h3f800000; //1
+    //localparam logic [31:0] const_1 = 32'h3f800000; //1
     localparam logic [31:0] const_m1 = 32'hbf800000;//-1
     localparam logic [31:0] const_2 = 32'h40000000;//2
     localparam logic [31:0] const_m2 = 32'hc0000000;//-2
@@ -86,11 +86,13 @@ module sobel5x5_ieee #(
     //--------------------------------------------------------------
     // stage 1 - 1 cyc delay 
     //multiply pixel vals with Sobel constants
-    logic [31:0] gx0, gx1, gx2, gx3, gx4, gx5, gx6, gx7, gx8, gx9, gx10, gx11, gx12;
-    logic [31:0] gx13, gx14, gx15, gx16, gx17, gx18, gx19, gx20, gx21, gx22, gx23, gx24;
+    logic [31:0] gx0, gx1, gx3, gx4, gx5, gx6, gx8, gx9, gx10, gx11;
+    logic [31:0] gx13, gx14, gx15, gx16, gx18, gx19, gx20, gx21, gx23, gx24;
+    //logic [31:0] gx2, gx7, gx12, gx17, gx22; // *0-> deleted
     
-    logic [31:0] gy0, gy1, gy2, gy3, gy4, gy5, gy6, gy7, gy8, gy9, gy10, gy11, gy12; 
-    logic [31:0] gy13, gy14, gy15, gy16, gy17, gy18, gy19, gy20, gy21, gy22, gy23, gy24;
+    logic [31:0] gy0, gy1, gy2, gy3, gy4, gy5, gy6, gy7, gy8, gy9; 
+    logic [31:0]  gy15, gy16, gy17, gy18, gy19, gy20, gy21, gy22, gy23, gy24;
+    //logic [31:0] gy10, gy11, gy12, gy13, gy14; // *0-> deleted
     
     // Gx
     // Kx: [-1 -2 0 2 1 | -4 -8 0 8 4 | -6 -12 0 12 6 |-4 -8 0 8 4 | -1 -2 0 2 1]
@@ -100,7 +102,7 @@ module sobel5x5_ieee #(
     float_multiplier u_mult_gx1(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp01), .b(const_m2), .result(gx1), .valid_out());
     //float_multiplier u_mult_gx2(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp02), .b(const_0), .result(gx2), .valid_out());
     float_multiplier u_mult_gx3(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp03), .b(const_2), .result(gx3), .valid_out());
-    float_multiplier u_mult_gx4(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp04), .b(const_1), .result(gx4), .valid_out());
+    //float_multiplier u_mult_gx4(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp04), .b(const_1), .result(gx4), .valid_out());
     
     float_multiplier u_mult_gx5(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp10), .b(const_m4), .result(gx5), .valid_out());
     float_multiplier u_mult_gx6(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp11), .b(const_m8), .result(gx6), .valid_out());
@@ -124,18 +126,18 @@ module sobel5x5_ieee #(
     float_multiplier u_mult_gx21(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp41), .b(const_m2), .result(gx21), .valid_out());
     //float_multiplier u_mult_gx22(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp42), .b(const_0), .result(gx22), .valid_out());
     float_multiplier u_mult_gx23(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp43), .b(const_2), .result(gx23), .valid_out());
-    float_multiplier u_mult_gx24(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp44), .b(const_1), .result(gx24), .valid_out());
+    //float_multiplier u_mult_gx24(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp44), .b(const_1), .result(gx24), .valid_out());
     
     
     // Ky: [1 4 6 4 1 | 2 8 12 8 2| 0 0 0 0 0 | -2 -8 -12 -8 -2 | -1 -4 -6 -4 -1]
     //Gy =(P00 + 4P01 + 6P02 + 4P03 + P04) + (2P10 +8P11 + 12P12 + 8P13 +2P14) 
     // + (-2P30 - 8P31 -12P32 - 8P33 - 2P34) + (-P40 - 4P41 - 6P42 -4P43 - P44)
     //
-    float_multiplier u_mult_gy0(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp00), .b(const_1), .result(gy0), .valid_out());
+    //float_multiplier u_mult_gy0(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp00), .b(const_1), .result(gy0), .valid_out());
     float_multiplier u_mult_gy1(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp01), .b(const_4), .result(gy1), .valid_out());
     float_multiplier u_mult_gy2(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp02), .b(const_6), .result(gy2), .valid_out());
     float_multiplier u_mult_gy3(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp03), .b(const_4), .result(gy3), .valid_out());
-    float_multiplier u_mult_gy4(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp04), .b(const_1), .result(gy4), .valid_out());
+    //float_multiplier u_mult_gy4(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp04), .b(const_1), .result(gy4), .valid_out());
     
     float_multiplier u_mult_gy5(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp10), .b(const_2), .result(gy5), .valid_out());
     float_multiplier u_mult_gy6(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp11), .b(const_8), .result(gy6), .valid_out());
@@ -161,6 +163,22 @@ module sobel5x5_ieee #(
     float_multiplier u_mult_gy23(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp43), .b(const_m4), .result(gy23), .valid_out());
     float_multiplier u_mult_gy24(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp44), .b(const_m1), .result(gy24), .valid_out());
     
+        // delay values gx_2d gy_2d5 for 1 cycle to add later
+    always_ff @(posedge clk or negedge reset) begin
+        if (!reset) begin
+            gx4 <= 32'd0;
+            gx24 <= 32'd0;
+            gy0 <= 32'd0;
+            gy4 <= 32'd0;
+        end 
+        else if (valid_in) begin
+            gx4 <= fp04;
+            gx24 <= fp44;
+            gy0 <= fp00;
+            gy4 <= fp04;
+
+        end
+    end
     
     //--------------------------------------------------------------
     // stage 2 - 1 cycle delay

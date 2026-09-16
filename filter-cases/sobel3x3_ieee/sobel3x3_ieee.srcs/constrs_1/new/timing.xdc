@@ -1,4 +1,4 @@
-create_clock -add -name clk -period 13.000  [get_ports {clk}];
+create_clock -add -name clk -period 20.000  [get_ports {clk}];
 
 # fix errors: missing input delay on pixel_in[0]....
 set_input_delay -clock clk 0.000 [get_ports {pixel_in[*] valid_in}];

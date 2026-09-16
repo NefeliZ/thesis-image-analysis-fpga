@@ -22,7 +22,7 @@ module line_buffer_5x5 #(
     output logic [DATA_WIDTH-1:0] p40, p41, p42, p43, p44,
 
     input  logic valid_in, //check input
-    output logic valid_out //check output
+    output logic valid_out //check output 
 );
 
     // circular buffer lines 

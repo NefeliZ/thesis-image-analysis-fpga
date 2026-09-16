@@ -23,7 +23,7 @@ module tb_gaussblur3x3_ieee;
     bit first_pixel_seen;
     
     // clock
-    localparam time CLK_PERIOD = 13ns; // 10ns => 100 MHz
+    localparam time CLK_PERIOD = 20ns; // 20ns => 50 MHz
     logic clk;
     logic reset;
     
