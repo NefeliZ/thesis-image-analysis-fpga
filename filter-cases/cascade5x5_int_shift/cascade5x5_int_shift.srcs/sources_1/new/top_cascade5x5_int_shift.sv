@@ -7,8 +7,8 @@
 
 module top_cascade5x5_int_shift #(
     parameter int DATA_WIDTH = 8,
-    parameter int IMG_WIDTH = 372,
-    parameter int IMG_HEIGHT = 491
+    parameter int IMG_WIDTH = 372, //24,//372,
+    parameter int IMG_HEIGHT = 491 //24 //491
 
 )(
     input logic clk,
@@ -80,11 +80,11 @@ module top_cascade5x5_int_shift #(
 
     logic lb2_valid_out;
 
-    // line buffer instance 1 - creates sliding 3x3 win
+    // line buffer instance 2 - creates sliding 3x3 win
     line_buffer_5x5 #(
         .DATA_WIDTH(DATA_WIDTH),
-        .IMG_WIDTH(IMG_WIDTH-2), //1st stage shrinks image by 2
-        .IMG_HEIGHT(IMG_HEIGHT-2)
+        .IMG_WIDTH(IMG_WIDTH-4), //1st stage shrinks image by 4
+        .IMG_HEIGHT(IMG_HEIGHT-4)
     ) 
     u_lb_2 (
         .clk (clk),

@@ -68,6 +68,7 @@ module tb_cascade5x5_int_shift;
             cyc_count <= cyc_count + 1;
     end
     
+    
     //vars & paths for files
     int file_in, file_out;
     int status;
@@ -76,7 +77,7 @@ module tb_cascade5x5_int_shift;
     int read_count  = 0; //count read pixels
     int write_count = 0; // count written pixels
     
-    parameter string path = "C:/workspace/fysiko_apth/ptuxiaki/general-code/img_process/files/";
+    parameter string path = "../files/";
     parameter string FILE_IN = {path, "smeagol_bin_vals_5x5_doublepad.txt"};
     parameter string FILE_OUT = {path, "smeagol_verilog_out_cascade5x5_int_shift.txt"};
     
@@ -144,6 +145,7 @@ module tb_cascade5x5_int_shift;
             $display("error. OUTPUT file not opened");
             $finish;
         end
+
         
         // wait for system to be ready - reset=1
         wait (reset == 1'b1); 

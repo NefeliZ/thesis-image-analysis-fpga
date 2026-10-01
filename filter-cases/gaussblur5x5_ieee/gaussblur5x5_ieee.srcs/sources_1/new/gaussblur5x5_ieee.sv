@@ -27,15 +27,28 @@ module gaussblur5x5_ieee #(
     //valid_out only in 1 instance per stage - avoid error
     logic vo_1, vo_2, vo_3, vo_4, vo_5;
     
+    //--------------------------------------------------------------
     //gaussian blur constants in ieee format
-    //localparam logic [31:0] const_1 = 32'h3f800000; //1
-    localparam logic [31:0] const_2 = 32'h40000000; //2
-    localparam logic [31:0] const_4 = 32'h40800000; //4
-    localparam logic [31:0] const_6 = 32'h40c00000; //6
-    localparam logic [31:0] const_16 = 32'h41800000; //16
-    localparam logic [31:0] const_24 = 32'h41c00000; // 24
-    localparam logic [31:0] const_36 = 32'h42100000; // 36
-    localparam logic [31:0] const_256 = 32'h3b800000; // 1/256
+
+    // 00, 04, 40, 44
+    localparam logic [31:0] const_corner = 32'h3b4293d7; //0.002969017 
+    
+    //01, 03, 10, 14, 30, 34, 41, 43
+    localparam logic [31:0] const_sideout = 32'h3c5a024a; //0.013306210
+    
+    //02, 20, 24, 42
+    localparam logic [31:0] const_sideoutcenter = 32'h3cb3b7ce; //0.021938231
+    
+    //11, 13, 31, 33
+    localparam logic [31:0] const_insidecorner = 32'h3d744317; //0.059634294
+    
+    //12, 21, 23, 32
+    localparam logic [31:0] const_inside = 32'h3dc95c2b; //0.098320328
+     
+     //22
+    localparam logic [31:0] const_center = 32'h3e25fe48; //0.162102818  
+  
+    
 
     //--------------------------------------------------------------
     // stage 0 - 0 delay
@@ -83,57 +96,36 @@ module gaussblur5x5_ieee #(
     logic [31:0] g0, g1, g2, g3, g4, g5, g6, g7, g8, g9, g10, g11, g12;
     logic [31:0] g13, g14, g15, g16, g17, g18, g19, g20, g21, g22, g23, g24;
     
-    // (1P00 + 4P01 + 6P02 + 4P03 + 1P04) + 
-    // (4P10 + 16P11 + 24P12 + 16P13 + 4P14) + 
-    // (6P20 + 24P21 + 36P22 + 24P23 + 6P24) + 
-    // (4P30 + 16P31 + 24P32 + 16P33 + 4P34) + 
-    // (1P40 +  4P41 + 6P42  + 4P43 + 1P44)
-    //float_multiplier u_mult_g0 (.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp00), .b(const_1), .result(g0), .valid_out(vo_1));
-    float_multiplier u_mult_g1 (.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp01), .b(const_4), .result(g1), .valid_out(vo_1));
-    float_multiplier u_mult_g2 (.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp02), .b(const_6), .result(g2), .valid_out());
-    float_multiplier u_mult_g3(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp03), .b(const_4), .result(g3), .valid_out());
-    //float_multiplier u_mult_g4(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp04), .b(const_1), .result(g4), .valid_out());
+    float_multiplier u_mult_g0 (.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp00), .b(const_corner), .result(g0), .valid_out(vo_1));
+    float_multiplier u_mult_g1 (.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp01), .b(const_sideout), .result(g1), .valid_out());
+    float_multiplier u_mult_g2 (.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp02), .b(const_sideoutcenter), .result(g2), .valid_out());
+    float_multiplier u_mult_g3(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp03), .b(const_sideout), .result(g3), .valid_out());
+    float_multiplier u_mult_g4(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp04), .b(const_corner), .result(g4), .valid_out());
     
-    float_multiplier u_mult_g5(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp10), .b(const_4), .result(g5), .valid_out());
-    float_multiplier u_mult_g6(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp11), .b(const_16), .result(g6), .valid_out());
-    float_multiplier u_mult_g7(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp12), .b(const_24), .result(g7), .valid_out());
-    float_multiplier u_mult_g8(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp13), .b(const_16), .result(g8), .valid_out());
-    float_multiplier u_mult_g9(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp14), .b(const_4), .result(g9), .valid_out());
+    float_multiplier u_mult_g5(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp10), .b(const_sideout), .result(g5), .valid_out());
+    float_multiplier u_mult_g6(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp11), .b(const_insidecorner), .result(g6), .valid_out());
+    float_multiplier u_mult_g7(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp12), .b(const_inside), .result(g7), .valid_out());
+    float_multiplier u_mult_g8(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp13), .b(const_insidecorner), .result(g8), .valid_out());
+    float_multiplier u_mult_g9(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp14), .b(const_sideout), .result(g9), .valid_out());
     
-    float_multiplier u_mult_g10(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp20), .b(const_6), .result(g10), .valid_out());
-    float_multiplier u_mult_g11(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp21), .b(const_24), .result(g11), .valid_out());
-    float_multiplier u_mult_g12(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp22), .b(const_36), .result(g12), .valid_out());
-    float_multiplier u_mult_g13(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp23), .b(const_24), .result(g13), .valid_out());
-    float_multiplier u_mult_g14(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp24), .b(const_6), .result(g14), .valid_out());
+    float_multiplier u_mult_g10(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp20), .b(const_sideoutcenter), .result(g10), .valid_out());
+    float_multiplier u_mult_g11(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp21), .b(const_inside), .result(g11), .valid_out());
+    float_multiplier u_mult_g12(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp22), .b(const_center), .result(g12), .valid_out());
+    float_multiplier u_mult_g13(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp23), .b(const_inside), .result(g13), .valid_out());
+    float_multiplier u_mult_g14(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp24), .b(const_sideoutcenter), .result(g14), .valid_out());
     
-    float_multiplier u_mult_g15(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp30), .b(const_4), .result(g15), .valid_out());
-    float_multiplier u_mult_g16(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp31), .b(const_16), .result(g16), .valid_out());
-    float_multiplier u_mult_g17(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp32), .b(const_24), .result(g17), .valid_out());
-    float_multiplier u_mult_g18(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp33), .b(const_16), .result(g18), .valid_out());
-    float_multiplier u_mult_g19(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp34), .b(const_4), .result(g19), .valid_out());
+    float_multiplier u_mult_g15(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp30), .b(const_sideout), .result(g15), .valid_out());
+    float_multiplier u_mult_g16(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp31), .b(const_insidecorner), .result(g16), .valid_out());
+    float_multiplier u_mult_g17(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp32), .b(const_inside), .result(g17), .valid_out());
+    float_multiplier u_mult_g18(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp33), .b(const_insidecorner), .result(g18), .valid_out());
+    float_multiplier u_mult_g19(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp34), .b(const_sideout), .result(g19), .valid_out());
     
-    //float_multiplier u_mult_g20(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp40), .b(const_1), .result(g20), .valid_out());
-    float_multiplier u_mult_g21(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp41), .b(const_4), .result(g21), .valid_out());
-    float_multiplier u_mult_g22(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp42), .b(const_6), .result(g22), .valid_out());
-    float_multiplier u_mult_g23(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp43), .b(const_4), .result(g23), .valid_out());
-    //float_multiplier u_mult_g24(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp44), .b(const_1), .result(g24), .valid_out());
+    float_multiplier u_mult_g20(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp40), .b(const_corner), .result(g20), .valid_out());
+    float_multiplier u_mult_g21(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp41), .b(const_sideout), .result(g21), .valid_out());
+    float_multiplier u_mult_g22(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp42), .b(const_sideoutcenter), .result(g22), .valid_out());
+    float_multiplier u_mult_g23(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp43), .b(const_sideout), .result(g23), .valid_out());
+    float_multiplier u_mult_g24(.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp44), .b(const_corner), .result(g24), .valid_out());
     
-    //instead f val*1 (cost) - just delay them for a cycle
-    // keep val for next cycle
-    always_ff @(posedge clk or negedge reset) begin
-        if (!reset) begin
-            g0 <= 32'd0;
-            g4 <= 32'd0;
-            g20 <= 32'd0;
-            g24 <= 32'd0;
-        end 
-        else if (valid_in) begin
-            g0 <= fp00;
-            g4 <= fp04;
-            g20 <= fp40;
-            g24 <= fp44;
-        end
-    end
     
     //--------------------------------------------------------------
     // stage 2 - 1 cycle delay
@@ -221,19 +213,13 @@ module gaussblur5x5_ieee #(
     // final addition
     logic [31:0] g_sum; 
 
-    float_adder u_add_g_sum (.clk(clk), .reset(reset), .valid_in(vo_5), .a(g_4d1), .b(g_4d2), .result(g_sum), .valid_out(vo_6));
+    float_adder u_add_g_sum (.clk(clk), .reset(reset), .valid_in(vo_5), .a(g_4d1), .b(g_4d2), .result(g_sum), .valid_out(valid_out));
 
-    //--------------------------------------------------------------
-    // stage 7 - 1 cycle delay
-    // calc G - multiply sum with 1/16 
-    logic [31:0] g_float;
-    
-    float_multiplier u_mult_g (.clk(clk), .reset(reset), .valid_in(vo_6), .a(g_sum), .b(const_256), .result(g_float), .valid_out(valid_out)); 
 
     //--------------------------------------------------------------
     // stage 8 - 0 delay
     // turn float to int
-    float_to_int u_fti (.input_float(g_float), .output_int(pixel_out));
+    float_to_int u_fti (.input_float(g_sum), .output_int(pixel_out));
     
 
 endmodule

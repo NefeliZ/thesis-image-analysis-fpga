@@ -8,6 +8,7 @@
 module tb_cascade5x5_ieee;
 
     localparam DATA_WIDTH = 8;
+    localparam DATA_WIDTH_F = 32;
     localparam int IMG_WIDTH = 372; //CHANGE
     localparam int IMG_HEIGHT = 491;
     
@@ -40,6 +41,7 @@ module tb_cascade5x5_ieee;
     // instantiation uut of top module only
     top_cascade5x5_ieee #(
         .DATA_WIDTH(DATA_WIDTH),
+        .DATA_WIDTH_F(DATA_WIDTH_F),
         .IMG_WIDTH (IMG_WIDTH),
         .IMG_HEIGHT (IMG_HEIGHT)
     ) 
@@ -76,7 +78,7 @@ module tb_cascade5x5_ieee;
     int read_count  = 0; //count read pixels
     int write_count = 0; // count written pixels
     
-    parameter string path = "C:/workspace/fysiko_apth/ptuxiaki/general-code/img_process/files/";
+    parameter string path = "../files/";
     parameter string FILE_IN = {path, "smeagol_bin_vals_5x5_doublepad.txt"};
     parameter string FILE_OUT = {path, "smeagol_verilog_out_cascade5x5_ieee.txt"};
     

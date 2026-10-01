@@ -6,16 +6,18 @@
 
 module sobel3x3_ieee #(
 
- parameter DATA_WIDTH = 8
+ parameter DATA_WIDTH = 8,
+ parameter DATA_WIDTH_F = 32
 )(
     input logic clk,
     input logic reset,
     input logic valid_in,
        
     //pixel inputs 
-    input logic [DATA_WIDTH-1:0] p00, p01, p02,
-    input logic [DATA_WIDTH-1:0] p10, p11, p12,
-    input logic [DATA_WIDTH-1:0] p20, p21, p22,
+    input logic [DATA_WIDTH_F-1:0] p00, p01, p02,
+    input logic [DATA_WIDTH_F-1:0] p10, p11, p12,
+    input logic [DATA_WIDTH_F-1:0] p20, p21, p22,
+   
     
     output logic valid_out,
     output logic [DATA_WIDTH-1:0] pixel_out // center pixel val - G
@@ -23,7 +25,7 @@ module sobel3x3_ieee #(
     
     //valid_out vars for all stages - keep flow
     //valid_out only in 1 instance per stage - avoid error
-    logic vo_1, vo_2, vo_3, vo_4;
+    logic vo_1, vo_2, vo_3, vo_4, vo_5;
     
     //sobel filter constants in ieee format
     //localparam logic [31:0] const_1 = 32'h3f800000; //1
@@ -37,17 +39,21 @@ module sobel3x3_ieee #(
     // change input integers to ieee floats
     logic [31:0] fp00, fp01, fp02, fp10, fp11, fp12, fp20, fp21, fp22;
     
-    int_to_float u_itf_00 (.input_bin(p00), .output_float(fp00));
-    int_to_float u_itf_01 (.input_bin(p01), .output_float(fp01));
-    int_to_float u_itf_02 (.input_bin(p02), .output_float(fp02));
+    assign fp00 = p00; assign fp01 = p01; assign fp02 = p02;
+    assign fp10 = p10; assign fp11 = p11; assign fp12 = p12;
+    assign fp20 = p20; assign fp21 = p21; assign fp22 = p22;
     
-    int_to_float u_itf_10 (.input_bin(p10), .output_float(fp10));
-    int_to_float u_itf_11 (.input_bin(p11), .output_float(fp11));
-    int_to_float u_itf_12 (.input_bin(p12), .output_float(fp12));
+    //int_to_float u_itf_00 (.input_bin(p00), .output_float(fp00));
+   // int_to_float u_itf_01 (.input_bin(p01), .output_float(fp01));
+    //int_to_float u_itf_02 (.input_bin(p02), .output_float(fp02));
+    
+    //int_to_float u_itf_10 (.input_bin(p10), .output_float(fp10));
+    //int_to_float u_itf_11 (.input_bin(p11), .output_float(fp11));
+    //int_to_float u_itf_12 (.input_bin(p12), .output_float(fp12));
 
-    int_to_float u_itf_20 (.input_bin(p20), .output_float(fp20));
-    int_to_float u_itf_21 (.input_bin(p21), .output_float(fp21));
-    int_to_float u_itf_22 (.input_bin(p22), .output_float(fp22));
+    //int_to_float u_itf_20 (.input_bin(p20), .output_float(fp20));
+    //int_to_float u_itf_21 (.input_bin(p21), .output_float(fp21));
+    //int_to_float u_itf_22 (.input_bin(p22), .output_float(fp22));
 
 
     //--------------------------------------------------------------
@@ -159,12 +165,22 @@ module sobel3x3_ieee #(
     assign gx_abs = {1'b0, gx_sum[30:0]};
     assign gy_abs = {1'b0, gy_sum[30:0]};
     
-    float_adder u_add_g (.clk(clk), .reset(reset), .valid_in(vo_4), .a(gx_abs), .b(gy_abs), .result(g_sum_float), .valid_out(valid_out));
+    float_adder u_add_g (.clk(clk), .reset(reset), .valid_in(vo_4), .a(gx_abs), .b(gy_abs), .result(g_sum_float), .valid_out(vo_5));
     
     //--------------------------------------------------------------
-    // stage 6 - 0 delay
+    // stage 6 - 1 cycle delay
+    // scale G - divide by 8
+    logic [31:0] g_scale;
+    
+    localparam logic [31:0] const_div8 = 32'h3e000000;// 1/8
+
+    float_multiplier u_mult_gscale (.clk(clk), .reset(reset), .valid_in(vo_5), .a(g_sum_float), .b(const_div8), .result(g_scale), .valid_out(valid_out));
+    
+    
+    //--------------------------------------------------------------
+    // stage 7 - 0 delay
     // turn float to int
-    float_to_int u_fti (.input_float(g_sum_float), .output_int(pixel_out));
+    float_to_int u_fti (.input_float(g_scale), .output_int(pixel_out));
 
     
 endmodule

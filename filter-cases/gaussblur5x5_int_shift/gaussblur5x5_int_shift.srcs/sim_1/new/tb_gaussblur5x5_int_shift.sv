@@ -75,7 +75,7 @@ module tb_gaussblur5x5_int_shift;
     int read_count  = 0; //count read pixels
     int write_count = 0; // count written pixels
     
-    parameter string path = "C:/workspace/fysiko_apth/ptuxiaki/general-code/img_process/files/";
+    parameter string path = "../files/";
     parameter string FILE_IN = {path, "smeagol_bin_vals_5x5.txt"};
     parameter string FILE_OUT = {path, "smeagol_verilog_out_gaussblur5x5_int_shift.txt"};
     

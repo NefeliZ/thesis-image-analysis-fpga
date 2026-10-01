@@ -38,7 +38,8 @@ module gaussblur5x5_int_shift #(
     assign window[4][3] = p43;  assign window[4][4] = p44;
     
     //gaussian blur calculations
-    logic [15:0] g_sum;
+    logic [15:0] g_sum, g_div;
+    logic [7:0] g_fin;
 
     always_comb begin
         // K: 1/256 * [1,  4,  6,  4, 1],[4, 16, 24, 16, 4],[6, 24, 36, 24, 6],[4, 16, 24, 16, 4],[1,  4,  6,  4, 1]]
@@ -61,6 +62,9 @@ module gaussblur5x5_int_shift #(
                 {8'b0, window[4][0]} + ({8'b0, window[4][1]} << 2) +
                 ({8'b0, window[4][2]} << 2) + ({8'b0, window[4][2]} << 1) +// x6 = x4 + x2
                 ({8'b0, window[4][3]} << 2) + {8'b0, window[4][4]};
+                
+        g_div = g_sum >> 8;
+        g_fin = g_div[7:0];
     end
 
     //make output logic
@@ -74,7 +78,7 @@ module gaussblur5x5_int_shift #(
             valid_out <= valid_in;
             if (valid_in) begin //if it took val
                 // keep bits [11:4] = g_sum >> 8 = 1/256
-                pixel_out <= g_sum[15:8];
+                pixel_out <= g_fin;
                 //no saturation case needed
                 // factors sum up to 1
                 // for vals <=255 it wont saturate

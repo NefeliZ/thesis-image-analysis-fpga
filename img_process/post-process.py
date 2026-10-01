@@ -3,21 +3,19 @@
 # applies filter with python
 # compares images
 #
-from PIL import Image
 import cv2
 import numpy as np
-from PIL import Image, ImageOps
 import os
 import matplotlib.pyplot as plt
 #
 import sys
-sys.path.append('C:/workspace/fysiko_apth/ptuxiaki/general-code/img_process') #add path for py files
+sys.path.append('../img_process') #add path for py files
 import my_functions
 import custom_filters
 #############
 
 ### file path
-path = 'C:/workspace/fysiko_apth/ptuxiaki/general-code/img_process/files/'
+path = '../files/'
 
 #######################################
 #### file names for cases
@@ -26,12 +24,12 @@ img_case = 'smeagol_'
 #win_size = '3x3'
 win_size = '5x5'
 
-f_case = 'int_shift'
-#f_case = 'ieee'
+#f_case = 'int_shift'
+f_case = 'ieee'
 
-filter = 'sobel'
+#filter = 'sobel'
 #filter = 'gaussblur'
-#filter = 'cascade'
+filter = 'cascade'
 
 #######################################
 verilog_input_path = path + img_case + "verilog_out_" + filter + win_size + "_" + f_case + ".txt"
@@ -69,7 +67,7 @@ if filter == 'sobel':
     py_img_filter = custom_filters.sobel_filter(padd_img, width, height, N)
 
 elif filter == 'gaussblur':
-    py_img_filter = custom_filters.gaussian_blur(padd_img, width, height, N)
+    py_img_filter = custom_filters.exact_gaussian_blur(padd_img, width, height, N)
 
 elif filter == 'cascade':
     py_img_filter = custom_filters.cascade(padd_img, width, height, N)
@@ -108,18 +106,37 @@ cv2.waitKey(0)
 #### compare images
 diff, max_diff, mse, rmse, psnr, ssim_val, ssim_img = my_functions.compare_img_metrics(py_img_filter, verilog_img_recreate)
 
+# --- Plot 1 - SSIM  ---
+plt.figure(figsize=(6, 5))
 plt.imshow(ssim_img, cmap=plt.cm.gray, vmin=0, vmax=1)
-plt.title(f'SSIM Quality Map || SSIM index: {ssim_val})')
-plt.colorbar(label='ssim')
+
+# Title size
+plt.title(f'SSIM Quality Map (Index: {ssim_val})', fontsize=14, fontweight='bold')
+
+# Colorbar label and tick font sizes
+cbar1 = plt.colorbar()
+cbar1.set_label('SSIM', fontsize=12)
+cbar1.ax.tick_params(labelsize=10)
+
 plt.axis('off')
+plt.tight_layout()
 plt.show()
 
-# plot difference - heatmap
+
+# --- Plot 2 - Heatmap ---
+plt.figure(figsize=(6, 5))
 plt.imshow(diff, cmap='hot')
-plt.colorbar(label='Pixel Difference')
-plt.title(f'Absolute Difference Heatmap (Max diff: {np.max(diff)})')
+
+plt.title(f'Absolute Difference Heatmap (Max diff: {np.max(diff)})', fontsize=14, fontweight='bold')
+cbar2 = plt.colorbar()
+cbar2.set_label('Pixel Difference', fontsize=12)
+cbar2.ax.tick_params(labelsize=10)
+plt.tight_layout()
 plt.show()
 
+
+########################
+####### print vals
 print("--------------------------")
 print(f"Max abs diff : {max_diff}")
 print(f"MSE: {mse}")

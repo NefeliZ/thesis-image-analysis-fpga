@@ -6,7 +6,9 @@
 
 module gaussblur3x3_ieee #(
 
- parameter DATA_WIDTH = 8
+ parameter DATA_WIDTH = 8,
+ parameter DATA_WIDTH_F = 32
+
 )(
     input logic clk,
     input logic reset,
@@ -18,19 +20,23 @@ module gaussblur3x3_ieee #(
     input  logic [DATA_WIDTH-1:0] p20, p21, p22,
     
     output logic valid_out,
-    output logic [DATA_WIDTH-1:0] pixel_out // center pixel val - G
+    output logic [DATA_WIDTH_F-1:0] pixel_out // center pixel val - G
 );
     
     //valid_out vars for all stages - keep flow
     //valid_out only in 1 instance per stage - avoid error
-    logic vo_1, vo_2, vo_3, vo_4, vo_5;
+    logic vo_1, vo_2, vo_3, vo_4;
     
+    //--------------------------------------------------------------
     //gaussian blur constants in ieee format
-    // K: 1/16 * [1 2 1 | 2 4 2 | 1 2 1]
-    //localparam logic [31:0] const_1 = 32'h3f800000; //1
-    localparam logic [31:0] const_2 = 32'h40000000; //2
-    localparam logic [31:0] const_4 = 32'h40800000; //4
-    localparam logic [31:0] const_16 = 32'h3d800000; //1/16
+    // 00, 02, 20, 22
+    localparam logic [31:0] const_corner = 32'h3d37fd38; // 0.044919223
+    
+    // 01, 10, 12, 21
+    localparam logic [31:0] const_side   = 32'h3dfa1132; // 0.122103110
+    
+    // 11
+    localparam logic [31:0] const_center = 32'h3ea9f032; // 0.331910670
     
     
     //--------------------------------------------------------------
@@ -55,34 +61,17 @@ module gaussblur3x3_ieee #(
     //multiply pixel vals with constants
     logic [31:0] g0, g1, g2, g3, g4, g5, g6, g7, g8;
     
-    //-> 1*img00, 2*img01, 1*img02 , 2*img10, 4*img11, 2*img12 , 1*img20, 2*img21, 1*img22
-    //float_multiplier u_mult_g0 (.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp00), .b(const_1), .result(g0), .valid_out(vo_1)); 
-    float_multiplier u_mult_g1 (.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp01), .b(const_2), .result(g1), .valid_out(vo_1)); 
-    //float_multiplier u_mult_g2 (.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp02), .b(const_1), .result(g2), .valid_out()); 
-    float_multiplier u_mult_g3 (.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp10), .b(const_2), .result(g3), .valid_out());
-    float_multiplier u_mult_g4 (.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp11), .b(const_4), .result(g4), .valid_out()); 
-    float_multiplier u_mult_g5 (.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp12), .b(const_2), .result(g5), .valid_out()); 
-    //float_multiplier u_mult_g6 (.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp20), .b(const_1), .result(g6), .valid_out()); 
-    float_multiplier u_mult_g7 (.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp21), .b(const_2), .result(g7), .valid_out()); 
-    //float_multiplier u_mult_g8 (.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp22), .b(const_1), .result(g8), .valid_out()); 
+    float_multiplier u_mult_g0 (.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp00), .b(const_corner), .result(g0), .valid_out(vo_1)); 
+    float_multiplier u_mult_g1 (.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp01), .b(const_side), .result(g1), .valid_out()); 
+    float_multiplier u_mult_g2 (.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp02), .b(const_corner), .result(g2), .valid_out()); 
+    float_multiplier u_mult_g3 (.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp10), .b(const_side), .result(g3), .valid_out());
+    float_multiplier u_mult_g4 (.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp11), .b(const_center), .result(g4), .valid_out()); 
+    float_multiplier u_mult_g5 (.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp12), .b(const_side), .result(g5), .valid_out()); 
+    float_multiplier u_mult_g6 (.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp20), .b(const_corner), .result(g6), .valid_out()); 
+    float_multiplier u_mult_g7 (.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp21), .b(const_side), .result(g7), .valid_out()); 
+    float_multiplier u_mult_g8 (.clk(clk), .reset(reset), .valid_in(valid_in), .a(fp22), .b(const_corner), .result(g8), .valid_out()); 
     
-    //instead f val*1 (cost) - just delay them for a cycle
-    // keep val for next cycle
-    always_ff @(posedge clk or negedge reset) begin
-        if (!reset) begin
-            g0 <= 32'd0;
-            g2 <= 32'd0;
-            g6 <= 32'd0;
-            g8 <= 32'd0;
-        end 
-        else if (valid_in) begin
-            g0 <= fp00;
-            g2 <= fp02;
-            g6 <= fp20;
-            g8 <= fp22;
-        end
-    end
-    
+   
     //--------------------------------------------------------------
     // stage 2 - 1 cycle delay
     // add factors in pairs-doubles
@@ -144,21 +133,15 @@ module gaussblur3x3_ieee #(
     //--------------------------------------------------------------
     // stage 5 - 1 cycle delay
     // final addition
-    logic [31:0] g_sum;
+    //logic [31:0] g_sum;
 
-    float_adder u_add_g_sum (.clk(clk), .reset(reset), .valid_in(vo_4), .a(g_3d1), .b(g_3d2), .result(g_sum), .valid_out(vo_5));
+    float_adder u_add_g_sum (.clk(clk), .reset(reset), .valid_in(vo_4), .a(g_3d1), .b(g_3d2), .result(pixel_out), .valid_out(valid_out));
 
-    //--------------------------------------------------------------
-    // stage 6 - 1 cycle delay
-    // calc G - multiply sum with 1/16 
-    logic [31:0] g_float;
-    
-    float_multiplier u_mult_g (.clk(clk), .reset(reset), .valid_in(vo_5), .a(g_sum), .b(const_16), .result(g_float), .valid_out(valid_out)); 
 
     //--------------------------------------------------------------
-    // stage 7 - 0 delay
+    // stage 6 - 0 delay
     // turn float to int
-    float_to_int u_fti (.input_float(g_float), .output_int(pixel_out));
+    //float_to_int u_fti (.input_float(g_sum), .output_int(pixel_out));
     
 
 endmodule

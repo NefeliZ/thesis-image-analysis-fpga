@@ -7,6 +7,7 @@
 
 module top_cascade5x5_ieee #(
     parameter int DATA_WIDTH = 8,
+    parameter int DATA_WIDTH_F = 32,
     parameter int IMG_WIDTH = 372,
     parameter int IMG_HEIGHT = 491
 
@@ -51,12 +52,13 @@ module top_cascade5x5_ieee #(
     //--------------------------------------------------------------
     // stage 2: filter 1 - gaussian blur
     logic gauss_valid_out;
-    logic [DATA_WIDTH-1:0] gauss_pixel_out;
+    logic [DATA_WIDTH_F-1:0] gauss_pixel_out;
     
     gaussblur5x5_ieee #(
-        .DATA_WIDTH(DATA_WIDTH)
+        .DATA_WIDTH(DATA_WIDTH),
+        .DATA_WIDTH_F(DATA_WIDTH_F)
     ) 
-    u_gaussblur_int_1 (
+    u_gaussblur_ieee_1 (
         .clk (clk),
         .reset (reset),
         .valid_in (lb1_valid_out),
@@ -72,19 +74,19 @@ module top_cascade5x5_ieee #(
 
     //--------------------------------------------------------------
     // stage 3: line buffer 2
-    logic [DATA_WIDTH-1:0] lb2_w00, lb2_w01, lb2_w02, lb2_w03, lb2_w04;
-    logic [DATA_WIDTH-1:0] lb2_w10, lb2_w11, lb2_w12, lb2_w13, lb2_w14;
-    logic [DATA_WIDTH-1:0] lb2_w20, lb2_w21, lb2_w22, lb2_w23, lb2_w24;
-    logic [DATA_WIDTH-1:0] lb2_w30, lb2_w31, lb2_w32, lb2_w33, lb2_w34;
-    logic [DATA_WIDTH-1:0] lb2_w40, lb2_w41, lb2_w42, lb2_w43, lb2_w44;
+    logic [DATA_WIDTH_F-1:0] lb2_w00, lb2_w01, lb2_w02, lb2_w03, lb2_w04;
+    logic [DATA_WIDTH_F-1:0] lb2_w10, lb2_w11, lb2_w12, lb2_w13, lb2_w14;
+    logic [DATA_WIDTH_F-1:0] lb2_w20, lb2_w21, lb2_w22, lb2_w23, lb2_w24;
+    logic [DATA_WIDTH_F-1:0] lb2_w30, lb2_w31, lb2_w32, lb2_w33, lb2_w34;
+    logic [DATA_WIDTH_F-1:0] lb2_w40, lb2_w41, lb2_w42, lb2_w43, lb2_w44;
 
     logic lb2_valid_out;
 
     // line buffer instance 1 - creates sliding 3x3 win
     line_buffer_5x5 #(
-        .DATA_WIDTH(DATA_WIDTH),
-        .IMG_WIDTH(IMG_WIDTH-2), //1st stage shrinks image by 2
-        .IMG_HEIGHT(IMG_HEIGHT-2)
+        .DATA_WIDTH(DATA_WIDTH_F),
+        .IMG_WIDTH(IMG_WIDTH-4), //1st stage shrinks image by 4
+        .IMG_HEIGHT(IMG_HEIGHT-4)
     ) 
     u_lb_2 (
         .clk (clk),
@@ -103,7 +105,8 @@ module top_cascade5x5_ieee #(
     // stage 4: filter 2 - sobel
     
     sobel5x5_ieee #(
-        .DATA_WIDTH(DATA_WIDTH)
+        .DATA_WIDTH(DATA_WIDTH),
+        .DATA_WIDTH_F(DATA_WIDTH_F)
     ) 
     u_sobel_int_2 (
         .clk (clk),

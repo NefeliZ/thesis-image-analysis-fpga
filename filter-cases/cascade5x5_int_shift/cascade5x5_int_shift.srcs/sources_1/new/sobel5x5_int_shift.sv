@@ -41,7 +41,7 @@ module sobel5x5_int_shift #(
     logic signed [15:0] gy_pos, gy_neg;
     logic signed [15:0] gx, gy;
     logic [15:0] abs_gx, abs_gy;
-    logic [15:0] g_sum;
+    logic [15:0] g_sum, g_scale;
 
     //sobel filter calculations
     always_comb begin
@@ -96,6 +96,10 @@ module sobel5x5_int_shift #(
 
         //sum G = |Gx| + |Gy|
         g_sum = abs_gx + abs_gy;
+        
+        //scale val -> div by 64 -> shift 6
+        g_scale = g_sum >> 6;
+        
     end
 
     //make output logic
@@ -108,10 +112,10 @@ module sobel5x5_int_shift #(
             //fix alignment problem - in and out in synch to wait for pixelout
             valid_out <= valid_in;
             if (valid_in) begin //if it took val
-                if (g_sum > 16'd255) // if 11-bit and >255 => keep 255 8bit (white-max val)
+                if (g_scale > 16'd255) // if 11-bit and >255 => keep 255 8bit (white-max val)
                     pixel_out <= 8'd255;
                 else
-                    pixel_out <= g_sum[7:0]; //else keep 8bit val 
+                    pixel_out <= g_scale[7:0]; //else keep 8bit val 
                 //
             end 
             else begin //else it didnt make val

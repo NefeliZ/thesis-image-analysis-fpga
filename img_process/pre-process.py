@@ -6,25 +6,23 @@
 # each line has 1 pixel bin val
 # no winSize needed - works for all img shapes
 #
-from PIL import Image
 import cv2
 import numpy as np
-from PIL import Image, ImageOps
 #
 import sys
-sys.path.append('C:/workspace/fysiko_apth/ptuxiaki/general-code/img_process') #add path for py files
+sys.path.append('../img_process') #add path for py files
 import my_functions
 #############
 
 ### file path
-path = 'C:/workspace/fysiko_apth/ptuxiaki/general-code/img_process/files/'
+path = '../files/'
 
 #######################################
 #### file names
 img_case = 'smeagol_'
 
-win_size = '3x3'
-#win_size = '5x5'
+#win_size = '3x3'
+win_size = '5x5'
 
 #pad_size = ''
 pad_size = '_doublepad' #double padding for cascaded filters

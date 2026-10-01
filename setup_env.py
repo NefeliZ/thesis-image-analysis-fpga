@@ -12,7 +12,8 @@ packages = [
     "openpyxl",
     "pillow",
     "opencv-python",
-    "scikit-image"
+    "scikit-image",
+    "plotly"
 ]
 
 print("---- start install packages")

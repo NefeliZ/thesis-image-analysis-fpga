@@ -6,7 +6,8 @@
 //////
 
 module top_cascade3x3_ieee #(
-    parameter int DATA_WIDTH = 8,
+    parameter DATA_WIDTH = 8,
+    parameter DATA_WIDTH_F = 32,
     parameter int IMG_WIDTH = 368,
     parameter int IMG_HEIGHT = 487
 
@@ -47,10 +48,11 @@ module top_cascade3x3_ieee #(
     //--------------------------------------------------------------
     // stage 2: filter 1 - gaussian blur
     logic gauss_valid_out;
-    logic [DATA_WIDTH-1:0] gauss_pixel_out;
+    logic [DATA_WIDTH_F-1:0] gauss_pixel_out;
     
     gaussblur3x3_ieee #(
-        .DATA_WIDTH(DATA_WIDTH)
+        .DATA_WIDTH(DATA_WIDTH),
+        .DATA_WIDTH_F(DATA_WIDTH_F)
     ) 
     u_gaussblur_ieee_1 (
         .clk (clk),
@@ -65,14 +67,14 @@ module top_cascade3x3_ieee #(
 
     //--------------------------------------------------------------
     // stage 3: line buffer 2
-    logic [DATA_WIDTH-1:0] lb2_w00, lb2_w01, lb2_w02;
-    logic [DATA_WIDTH-1:0] lb2_w10, lb2_w11, lb2_w12;
-    logic [DATA_WIDTH-1:0] lb2_w20, lb2_w21, lb2_w22;
+    logic [DATA_WIDTH_F-1:0] lb2_w00, lb2_w01, lb2_w02;
+    logic [DATA_WIDTH_F-1:0] lb2_w10, lb2_w11, lb2_w12;
+    logic [DATA_WIDTH_F-1:0] lb2_w20, lb2_w21, lb2_w22;
     logic lb2_valid_out;
      
     // line buffer instance 1 - creates sliding 3x3 win
     line_buffer_3x3 #(
-        .DATA_WIDTH(DATA_WIDTH),
+        .DATA_WIDTH(DATA_WIDTH_F),
         .IMG_WIDTH(IMG_WIDTH-2), //1st stage shrinks image by 2
         .IMG_HEIGHT(IMG_HEIGHT-2)
     ) 
@@ -91,7 +93,8 @@ module top_cascade3x3_ieee #(
     // stage 4: filter 2 - sobel
     
     sobel3x3_ieee #(
-        .DATA_WIDTH(DATA_WIDTH)
+        .DATA_WIDTH(DATA_WIDTH),
+        .DATA_WIDTH_F(DATA_WIDTH_F)
     ) 
     u_sobel_ieee_2 (
         .clk (clk),

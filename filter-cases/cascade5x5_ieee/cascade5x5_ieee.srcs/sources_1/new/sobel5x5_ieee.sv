@@ -6,18 +6,20 @@
 
 module sobel5x5_ieee #(
 
- parameter DATA_WIDTH = 8
+ parameter DATA_WIDTH = 8,
+ parameter DATA_WIDTH_F = 32
+
 )(
     input logic clk,
     input logic reset,
     input logic valid_in,
        
     //pixel inputs 
-    input  logic [DATA_WIDTH-1:0] p00, p01, p02, p03, p04,
-    input  logic [DATA_WIDTH-1:0] p10, p11, p12, p13, p14,
-    input  logic [DATA_WIDTH-1:0] p20, p21, p22, p23, p24,
-    input  logic [DATA_WIDTH-1:0] p30, p31, p32, p33, p34,
-    input  logic [DATA_WIDTH-1:0] p40, p41, p42, p43, p44,
+    input  logic [DATA_WIDTH_F-1:0] p00, p01, p02, p03, p04,
+    input  logic [DATA_WIDTH_F-1:0] p10, p11, p12, p13, p14,
+    input  logic [DATA_WIDTH_F-1:0] p20, p21, p22, p23, p24,
+    input  logic [DATA_WIDTH_F-1:0] p30, p31, p32, p33, p34,
+    input  logic [DATA_WIDTH_F-1:0] p40, p41, p42, p43, p44,
     
     output logic valid_out,
     output logic [DATA_WIDTH-1:0] pixel_out // center pixel val - G
@@ -25,7 +27,7 @@ module sobel5x5_ieee #(
     
     //valid_out vars for all stages - keep flow
     //valid_out only in 1 instance per stage - avoid error
-    logic vo_1, vo_2, vo_3, vo_4, vo_5, vo_6;
+    logic vo_1, vo_2, vo_3, vo_4, vo_5, vo_6, vo_7;
     
     //sobel filter constants in ieee format
     //localparam logic [31:0] const_1 = 32'h3f800000; //1
@@ -52,35 +54,41 @@ module sobel5x5_ieee #(
     logic [31:0] fp30, fp31, fp32, fp33, fp34;
     logic [31:0] fp40, fp41, fp42, fp43, fp44;
 
-    int_to_float u_itf_00 (.input_bin(p00), .output_float(fp00));
-    int_to_float u_itf_01 (.input_bin(p01), .output_float(fp01));
-    int_to_float u_itf_02 (.input_bin(p02), .output_float(fp02));
-    int_to_float u_itf_03 (.input_bin(p03), .output_float(fp03));
-    int_to_float u_itf_04 (.input_bin(p04), .output_float(fp04));
+    assign fp00 = p00; assign fp01 = p01; assign fp02 = p02; assign fp03 = p03; assign fp04 = p04;
+    assign fp10 = p10; assign fp11 = p11; assign fp12 = p12; assign fp13 = p13; assign fp14 = p14;
+    assign fp20 = p20; assign fp21 = p21; assign fp22 = p22; assign fp23 = p23; assign fp24 = p24;
+    assign fp30 = p30; assign fp31 = p31; assign fp32 = p32; assign fp33 = p33; assign fp34 = p34;
+    assign fp40 = p40; assign fp41 = p41; assign fp42 = p42; assign fp43 = p43; assign fp44 = p44;
+    
+    //int_to_float u_itf_00 (.input_bin(p00), .output_float(fp00));
+    //int_to_float u_itf_01 (.input_bin(p01), .output_float(fp01));
+    //int_to_float u_itf_02 (.input_bin(p02), .output_float(fp02));
+    //int_to_float u_itf_03 (.input_bin(p03), .output_float(fp03));
+    //int_to_float u_itf_04 (.input_bin(p04), .output_float(fp04));
 
-    int_to_float u_itf_10 (.input_bin(p10), .output_float(fp10));
-    int_to_float u_itf_11 (.input_bin(p11), .output_float(fp11));
-    int_to_float u_itf_12 (.input_bin(p12), .output_float(fp12));
-    int_to_float u_itf_13 (.input_bin(p13), .output_float(fp13));
-    int_to_float u_itf_14 (.input_bin(p14), .output_float(fp14));
+    //int_to_float u_itf_10 (.input_bin(p10), .output_float(fp10));
+    //int_to_float u_itf_11 (.input_bin(p11), .output_float(fp11));
+    //int_to_float u_itf_12 (.input_bin(p12), .output_float(fp12));
+    //int_to_float u_itf_13 (.input_bin(p13), .output_float(fp13));
+    //int_to_float u_itf_14 (.input_bin(p14), .output_float(fp14));
 
-    int_to_float u_itf_20 (.input_bin(p20), .output_float(fp20));
-    int_to_float u_itf_21 (.input_bin(p21), .output_float(fp21));
-    int_to_float u_itf_22 (.input_bin(p22), .output_float(fp22));
-    int_to_float u_itf_23 (.input_bin(p23), .output_float(fp23));
-    int_to_float u_itf_24 (.input_bin(p24), .output_float(fp24));
+    //int_to_float u_itf_20 (.input_bin(p20), .output_float(fp20));
+    //int_to_float u_itf_21 (.input_bin(p21), .output_float(fp21));
+    //int_to_float u_itf_22 (.input_bin(p22), .output_float(fp22));
+    //int_to_float u_itf_23 (.input_bin(p23), .output_float(fp23));
+    //int_to_float u_itf_24 (.input_bin(p24), .output_float(fp24));
 
-    int_to_float u_itf_30 (.input_bin(p30), .output_float(fp30));
-    int_to_float u_itf_31 (.input_bin(p31), .output_float(fp31));
-    int_to_float u_itf_32 (.input_bin(p32), .output_float(fp32));
-    int_to_float u_itf_33 (.input_bin(p33), .output_float(fp33));
-    int_to_float u_itf_34 (.input_bin(p34), .output_float(fp34));
+    //int_to_float u_itf_30 (.input_bin(p30), .output_float(fp30));
+    //int_to_float u_itf_31 (.input_bin(p31), .output_float(fp31));
+    //int_to_float u_itf_32 (.input_bin(p32), .output_float(fp32));
+    //int_to_float u_itf_33 (.input_bin(p33), .output_float(fp33));
+    //int_to_float u_itf_34 (.input_bin(p34), .output_float(fp34));
 
-    int_to_float u_itf_40 (.input_bin(p40), .output_float(fp40));
-    int_to_float u_itf_41 (.input_bin(p41), .output_float(fp41));
-    int_to_float u_itf_42 (.input_bin(p42), .output_float(fp42));
-    int_to_float u_itf_43 (.input_bin(p43), .output_float(fp43));
-    int_to_float u_itf_44 (.input_bin(p44), .output_float(fp44));
+    //int_to_float u_itf_40 (.input_bin(p40), .output_float(fp40));
+    //int_to_float u_itf_41 (.input_bin(p41), .output_float(fp41));
+    //int_to_float u_itf_42 (.input_bin(p42), .output_float(fp42));
+    //int_to_float u_itf_43 (.input_bin(p43), .output_float(fp43));
+    //int_to_float u_itf_44 (.input_bin(p44), .output_float(fp44));
     
     
     //--------------------------------------------------------------
@@ -297,12 +305,20 @@ module sobel5x5_ieee #(
     assign gx_abs = {1'b0, gx_sum[30:0]};
     assign gy_abs = {1'b0, gy_sum[30:0]};
     
-    float_adder u_add_g (.clk(clk), .reset(reset), .valid_in(vo_6), .a(gx_abs), .b(gy_abs), .result(g_sum_float), .valid_out(valid_out));
+    float_adder u_add_g (.clk(clk), .reset(reset), .valid_in(vo_6), .a(gx_abs), .b(gy_abs), .result(g_sum_float), .valid_out(vo_7));
     
     //--------------------------------------------------------------
-    // stage 8 - 0 delay
+    // stage 8 - 1 cycle delay
+    // scale G -> divide by 64
+    logic [31:0] g_scale;
+    localparam logic [31:0] const_div64 = 32'h3c800000;//1/64  
+
+    float_multiplier u_mult_gscale (.clk(clk), .reset(reset), .valid_in(vo_7), .a(g_sum_float), .b(const_div64), .result(g_scale), .valid_out(valid_out));
+
+    //--------------------------------------------------------------
+    // stage 9 - 0 delay
     // turn float to int
-    float_to_int u_fti (.input_float(g_sum_float), .output_int(pixel_out));
+    float_to_int u_fti (.input_float(g_scale), .output_int(pixel_out));
 
     
 endmodule

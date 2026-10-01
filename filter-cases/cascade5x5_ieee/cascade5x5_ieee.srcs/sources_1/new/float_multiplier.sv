@@ -44,7 +44,7 @@ module float_multiplier (
         fin_e = ea + eb -9'd127;
         
         //Mantissa: multiply
-        prod_m = ma * mb; //(* use_dsp = "yes" *)
+        (* use_dsp = "yes" *) prod_m = ma * mb; //(* use_dsp = "yes" *)
     end
     
     logic [8:0] increased_e;
